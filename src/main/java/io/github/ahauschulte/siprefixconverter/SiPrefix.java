@@ -2,16 +2,12 @@ package io.github.ahauschulte.siprefixconverter;
 
 /**
  * Enumerates the International System of Units (SI) prefixes.
- * <p>
- * The enumeration covers the full range from quecto (10<sup>-30</sup>) to quetta (10<sup>30</sup>).
- * The constant {@link #UNIT} represents the absence of a prefix (10<sup>0</sup>).
- * </p>
  *
- * <h2>Usage</h2>
+ * <p>The enumeration covers the full range from quecto (10<sup>-30</sup>) to quetta (10<sup>30</sup>).
+ * The constant {@link #UNIT} represents the absence of a prefix (10<sup>0</sup> = 1).
+ *
+ * <p><b>Usage</b>
  * {@snippet :
- * import io.github.ahauschulte.siprefixconverter.SiPrefix;
- * import io.github.ahauschulte.siprefixconverter.SiPrefixConverter;
- *
  * // Convert 2.5 kilometres (kilo) to metres (unit):
  * double metres = SiPrefixConverter.convert(SiPrefix.KILO, SiPrefix.UNIT, 2.5); // -> 2500.0
  *
