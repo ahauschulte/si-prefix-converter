@@ -12,31 +12,16 @@ The public API centres around three types:
 This package is annotated with **`@NullMarked`** (JSpecify), i.e. types are **non‑null by default**. Passing `null` to
 API methods is a programming error and results in `NullPointerException`.
 
----
+## Motivation
 
-## Table of contents
+If you only need to scale numbers by decimal SI prefixes, a full measurement framework—such as javax.measure (JSR-385)
+and Indriya—may be more than you need. This library provides a small API for predictable SI prefix conversion across
+the full range from quecto to quetta, designed for clarity and steady performance. For primitives, it
+avoids allocations, and its behaviour is explicit: overflow-checked; integer downscaling truncates towards zero.
 
-<!-- TOC -->
-* [SI Prefix Converter](#si-prefix-converter)
-  * [Table of contents](#table-of-contents)
-  * [Features](#features)
-  * [Requirements](#requirements)
-  * [Installation](#installation)
-  * [Quick start](#quick-start)
-    * [One‑shot conversions](#oneshot-conversions)
-    * [Reusable converters (builder)](#reusable-converters-builder)
-  * [API overview](#api-overview)
-  * [Rounding semantics (long and BigInteger conversions)](#rounding-semantics-long-and-biginteger-conversions)
-  * [Overflow semantics (long conversions)](#overflow-semantics-long-conversions)
-  * [Performance notes](#performance-notes)
-  * [Build, test, docs](#build-test-docs)
-  * [Versioning & compatibility](#versioning--compatibility)
-  * [Contributing](#contributing)
-  * [License](#license)
-  * [AI Tools Used](#ai-tools-used)
-<!-- TOC -->
-
----
+By contrast, javax.measure/Indriya are comprehensive unit-and-quantity frameworks with dimensional analysis, unit
+algebra, formatting, and localisation. Prefer them when you need those capabilities. Choose this library when you simply
+rescale existing numbers and value a minimal footprint; both approaches can comfortably coexist in the same codebase.
 
 ## Features
 
