@@ -1,6 +1,7 @@
 package io.github.ahauschulte.siprefixconverter;
 
 import org.junit.jupiter.api.Test;
+import org.junit.platform.commons.support.ReflectionSupport;
 
 import java.math.BigInteger;
 
@@ -192,4 +193,10 @@ class SiPrefixConverterTest {
         assertThrows((NullPointerException.class),
                 () -> SiPrefixConverter.builder().forBigInteger().fixedConverter(null, SiPrefix.KILO));
     }
+
+    @Test
+    void testSiPrefixConverterNotInstantiable() {
+        assertThrows(AssertionError.class, () -> ReflectionSupport.newInstance(SiPrefixConverter.class));
+    }
+
 }
