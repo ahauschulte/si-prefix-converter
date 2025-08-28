@@ -6,8 +6,9 @@
 ## Summary
 
 Concise utilities for converting numeric values between [SI prefixes](https://en.wikipedia.org/wiki/Metric_prefix) in
-Java.  
-The public API centres around three types:
+Java.
+
+The public API focuses on three types:
 
 - `SiPrefix` — an enum of SI prefixes from **quecto** (10⁻³⁰) to **quetta** (10³⁰); `UNIT` represents 10⁰.
 - `SiPrefixConverter` — static, thread‑safe conversion methods for `double`, `long`, `int`, and `BigInteger`, plus a
@@ -88,21 +89,19 @@ import io.github.ahauschulte.siprefixconverter.SiPrefixConverter;
 // Doubles — full SI range
 double metres = SiPrefixConverter.convert(SiPrefix.KILO, SiPrefix.UNIT, 3.2); // 3200.0
 
-        // Longs — integer arithmetic (see rounding semantics below)
-        long nanosLong = SiPrefixConverter.convert(SiPrefix.MILLI, SiPrefix.NANO, 1L);    // 1_000_000L
+// Longs — integer arithmetic (see rounding semantics below)
+long nanosLong = SiPrefixConverter.convert(SiPrefix.MILLI, SiPrefix.NANO, 1L);    // 1_000_000L
 
-        // Ints — integer arithmetic (see rounding semantics below)
-        int nanosInt = SiPrefixConverter.convert(SiPrefix.MILLI, SiPrefix.NANO, 1);    // 1_000_000
+// Ints — integer arithmetic (see rounding semantics below)
+int nanosInt = SiPrefixConverter.convert(SiPrefix.MILLI, SiPrefix.NANO, 1);    // 1_000_000
 
-        // BigInteger — arbitrary precision
-        BigInteger seconds = SiPrefixConverter.convert(SiPrefix.MICRO, SiPrefix.UNIT, BigInteger.valueOf(250_000)); // 250
+// BigInteger — arbitrary precision
+BigInteger seconds = SiPrefixConverter.convert(SiPrefix.MICRO, SiPrefix.UNIT, BigInteger.valueOf(250_000)); // 250
 ```
 
 ### Reusable Converters via Builders
 
 ```java
-import java.math.BigInteger;
-
 import io.github.ahauschulte.siprefixconverter.SiPrefix;
 import io.github.ahauschulte.siprefixconverter.SiPrefixConverter;
 
@@ -111,28 +110,28 @@ var fromKilo = SiPrefixConverter.builder()
         .forDouble()
         .fixedSourcePrefixConverter(SiPrefix.KILO);
 
-        double metres2 = fromKilo.convert(SiPrefix.UNIT, 2.5); // 2500.0
+double metres = fromKilo.convert(SiPrefix.UNIT, 2.5); // 2500.0
+        
+// Fix the target prefix for longs (? → milli)
+var toMilli = SiPrefixConverter.builder()
+        .forLong()
+        .fixedTargetPrefixConverter(SiPrefix.MILLI);
 
-        // Fix the target prefix for longs (? → milli)
-        var toMilli = SiPrefixConverter.builder()
-                .forLong()
-                .fixedTargetPrefixConverter(SiPrefix.MILLI);
+long milliMetresLong = toMilli.convert(SiPrefix.UNIT, 1234L); // 1_234_000L
 
-        long milliMetresLong = toMilli.convert(SiPrefix.UNIT, 1234L); // 1_234_000L
+// Fix the target prefix for ints (? → milli)
+var toMilli = SiPrefixConverter.builder()
+        .forInt()
+        .fixedTargetPrefixConverter(SiPrefix.MILLI);
 
-        // Fix the target prefix for ints (? → milli)
-        var toMilli = SiPrefixConverter.builder()
-                .forInt()
-                .fixedTargetPrefixConverter(SiPrefix.MILLI);
+int milliMetresInt = toMilli.convert(SiPrefix.UNIT, 1234); // 1_234_000
 
-        int milliMetresInt = toMilli.convert(SiPrefix.UNIT, 1234); // 1_234_000
+// Fix both for BigInteger (micro → unit)
+var microToUnit = SiPrefixConverter.builder()
+        .forBigInteger()
+        .fixedConverter(SiPrefix.MICRO, SiPrefix.UNIT);
 
-        // Fix both for BigInteger (micro → unit)
-        var microToUnit = SiPrefixConverter.builder()
-                .forBigInteger()
-                .fixedConverter(SiPrefix.MICRO, SiPrefix.UNIT);
-
-        BigInteger exact = microToUnit.convert(java.math.BigInteger.valueOf(250_000)); // 250
+BigInteger exact = microToUnit.convert(java.math.BigInteger.valueOf(250_000)); // 250
 ```
 
 ## API Overview
