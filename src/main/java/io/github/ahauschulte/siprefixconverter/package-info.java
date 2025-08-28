@@ -16,6 +16,9 @@
  * // Convert 1_000_000 nanoseconds to milliseconds using longs (truncation towards zero)
  * long ms = SiPrefixConverter.convert(SiPrefix.NANO, SiPrefix.MILLI, 1_000_000L); // -> 1L
  *
+ * // Convert 1_000_000 nanoseconds to milliseconds using ints (truncation towards zero)
+ * int ms = SiPrefixConverter.convert(SiPrefix.NANO, SiPrefix.MILLI, 1_000_000); // -> 1
+ *
  * // Reusable converter: from micro to unit for BigInteger
  * var microToUnit = SiPrefixConverter.builder()
  *         .forBigInteger()
@@ -28,6 +31,8 @@
  *   <li><b>Doubles</b>: supports the full SI range from quecto (10^-30) to quetta (10^30).</li>
  *   <li><b>Longs</b>: uses integer arithmetic; scaling down truncates towards zero; conversion factors &gt; 10^18
  *   (for both up and down scaling) throw {@link java.lang.ArithmeticException ArithmeticException}.</li>
+ *   <li><b>Ints</b>: uses integer arithmetic; scaling down truncates towards zero; conversion factors &gt; 10^9
+ *  *   (for both up and down scaling) throw {@link java.lang.ArithmeticException ArithmeticException}.</li>
  *   <li><b>BigInteger</b>: supports the full SI range from quecto (10^-30) to quetta (10^30).</li>
  * </ul>
  */

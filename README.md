@@ -10,8 +10,8 @@ Concise utilities for converting numeric values between [SI prefixes](https://en
 The public API centres around three types:
 
 - `SiPrefix` — an enum of SI prefixes from **quecto** (10⁻³⁰) to **quetta** (10³⁰); `UNIT` represents 10⁰.
-- `SiPrefixConverter` — static, thread‑safe conversion methods for `double`, `long`, and `BigInteger`, plus a builder
-  entry point.
+- `SiPrefixConverter` — static, thread‑safe conversion methods for `double`, `long`, `int`, and `BigInteger`, plus a
+   builder entry point.
 - `SiPrefixConverterBuilder` — a small, type‑safe builder that produces reusable converters (fix source/target prefixes,
   or both).
 
@@ -32,8 +32,8 @@ rescale existing numbers and value a minimal footprint; both approaches can comf
 ## Features
 
 - Full SI range from **quecto** (10⁻³⁰) to **quetta** (10³⁰).
-- **Zero allocations** in the hot path for conversions of primitive types (i.e. `long`, `double`).
-- `double`, `long`, and `BigInteger` support.
+- `double`, `int`, `long`, and `BigInteger` support.
+- **Zero allocations** in the hot path for conversions of primitive types (i.e. `long`, `int`, `double`).
 - Reusable converters via a **builder** API (fix source/target/both).
 - **Non‑null‑by‑default** (`@NullMarked` with NullAway/Error Prone configured).
 - Clear failure modes: integer conversions throw on excessive factors or overflow during conversion.
@@ -79,6 +79,9 @@ double metres = SiPrefixConverter.convert(SiPrefix.KILO, SiPrefix.UNIT, 3.2); //
 
 // Longs — integer arithmetic (see rounding semantics below)
 long nanos = SiPrefixConverter.convert(SiPrefix.MILLI, SiPrefix.NANO, 1L);    // 1_000_000L
+        
+// Ints — integer arithmetic (see rounding semantics below)
+int nanos = SiPrefixConverter.convert(SiPrefix.MILLI, SiPrefix.NANO, 1);    // 1_000_000
 
 // BigInteger — arbitrary precision
 BigInteger seconds = SiPrefixConverter.convert(SiPrefix.MICRO, SiPrefix.UNIT, java.math.BigInteger.valueOf(250_000)); // 250
@@ -105,6 +108,13 @@ var toMilli = SiPrefixConverter.builder()
         .fixedTargetPrefixConverter(SiPrefix.MILLI);
 
 long milliMetres = toMilli.convert(SiPrefix.UNIT, 1234L); // 1_234_000L
+
+// Fix the target prefix for ints (? → milli)
+var toMilli = SiPrefixConverter.builder()
+        .forInt()
+        .fixedTargetPrefixConverter(SiPrefix.MILLI);
+
+int milliMetres = toMilli.convert(SiPrefix.UNIT, 1234); // 1_234_000
         
 // Fix both for BigInteger (micro → unit)
 var microToUnit = SiPrefixConverter.builder()
@@ -121,32 +131,32 @@ BigInteger exact = microToUnit.convert(java.math.BigInteger.valueOf(250_000)); /
 - **`SiPrefixConverter`**
     - `convert(SiPrefix source, SiPrefix target, double value): double`
     - `convert(SiPrefix source, SiPrefix target, long value): long`
+    - `convert(SiPrefix source, SiPrefix target, int value): int`
     - `convert(SiPrefix source, SiPrefix target, BigInteger value): BigInteger`
     - `builder(): SiPrefixConverterBuilder.BuilderChoice`
 - **`SiPrefixConverterBuilder`**
-    - `forDouble() / forLong() / forBigInteger()` → type‑specialised builders
+    - `forDouble() / forLong() / forInt() /forBigInteger()` → type‑specialised builders
     - `fixedSourcePrefixConverter(SiPrefix source)`
     - `fixedTargetPrefixConverter(SiPrefix target)`
     - `fixedConverter(SiPrefix source, SiPrefix target)`
 
 All methods are **thread‑safe** and expect **non‑null** arguments (package‑level `@NullMarked`).
 
-## Rounding semantics (long and BigInteger conversions)
+## Rounding semantics (long, int, and BigInteger conversions)
 
 - When *downscaling* (÷ 10ᵏ), the result is **truncated towards zero** (no rounding).
 
-This behaviour is fast and predictable for counters, timestamps, and sizes. If you require specific rounding rules or
-exact decimal arithmetic, prefer `double` for now.
+This behaviour is fast and predictable for counters, timestamps, and sizes.
 
-## Overflow semantics (long conversions)
+## Overflow semantics (long and int conversions)
 
-- When *upscaling* (× 10ᵏ), the value must not overflow `long`. If the factor exceeds **10¹⁸** or
-  the conversion calculation overflows, an `ArithmeticException` is thrown.
+- When *upscaling* (× 10ᵏ), the value must not overflow `long` or `int`. If the factor exceeds **10¹⁸** for a long
+  conversion, **10⁹** for an int conversion or the conversion calculation overflows, an `ArithmeticException` is thrown.
 
 ## Performance notes
 
 - Uses precomputed conversion factors and simple multiplies/divides.
-- Avoids heap allocations in normal operation when converting primitive values (i.e. `long`, `double`).
+- Avoids heap allocations in normal operation when converting primitive values (i.e. `long`, `int`, `double`).
 - Minimal branching; friendly to JIT in hot code paths.
 
 ## Build, test, docs

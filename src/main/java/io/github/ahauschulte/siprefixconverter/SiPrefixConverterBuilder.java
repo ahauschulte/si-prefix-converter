@@ -75,6 +75,13 @@ public interface SiPrefixConverterBuilder<S, T, C> {
         SiPrefixConverterBuilder<FixedSourceLongConverter, FixedTargetLongConverter, FixedLongConverter> forLong();
 
         /**
+         * Returns a {@link SiPrefixConverterBuilder} for {@code int} conversions.
+         *
+         * @return a {@link SiPrefixConverterBuilder} for {@code int} conversions.
+         */
+        SiPrefixConverterBuilder<FixedSourceIntConverter, FixedTargetIntConverter, FixedIntConverter> forInt();
+
+        /**
          * Returns a {@link SiPrefixConverterBuilder} for {@link BigInteger} conversions.
          *
          * @return a {@link SiPrefixConverterBuilder} for {@link BigInteger} conversions.
@@ -193,6 +200,70 @@ public interface SiPrefixConverterBuilder<S, T, C> {
          * the conversion calculation overflows
          */
         long convert(long sourceValue);
+    }
+
+    /**
+     * A converter for converting {@code int}s with a fixed source SI prefix.
+     */
+    @FunctionalInterface
+    interface FixedSourceIntConverter {
+
+        /**
+         * Converts an {@code int} value when the source prefix is fixed.
+         * <p>Integer arithmetic; scaling down truncates towards zero and an {@link ArithmeticException}
+         * is thrown if the conversion factor exceeds 10<sup>9</sup> (for both up and down scaling) or the conversion
+         * calculation overflows.
+         *
+         * @param targetSiPrefix the target prefix
+         * @param sourceValue    the value to convert
+         * @return the converted value (possibly truncated)
+         * @throws NullPointerException if {@code targetSiPrefix} is {@code null}
+         * @throws ArithmeticException  if the conversion factor is beyond 10^9 (for both up and down scaling) or
+         * the conversion calculation overflows
+         */
+        int convert(SiPrefix targetSiPrefix, int sourceValue);
+    }
+
+    /**
+     * A converter for converting {@code int}s with a fixed target SI prefix.
+     */
+    @FunctionalInterface
+    interface FixedTargetIntConverter {
+
+        /**
+         * Converts a {@code int} value when the target prefix is fixed.
+         * <p>Integer arithmetic; scaling down truncates towards zero and an {@link ArithmeticException}
+         * is thrown if the conversion factor exceeds 10<sup>9</sup> (for both up and down scaling) or the conversion
+         * calculation overflows.
+         *
+         * @param sourceSiPrefix the source prefix
+         * @param sourceValue    the value to convert
+         * @return the converted value (possibly truncated)
+         * @throws NullPointerException if {@code sourceSiPrefix} is {@code null}
+         * @throws ArithmeticException  if the conversion factor is beyond 10^9 (for both up and down scaling)
+         * or the conversion calculation overflows
+         */
+        int convert(SiPrefix sourceSiPrefix, int sourceValue);
+    }
+
+    /**
+     * A converter for converting {@code ints}s with both source and target SI prefix fixed.
+     */
+    @FunctionalInterface
+    interface FixedIntConverter {
+
+        /**
+         * Converts a {@code int} value when both prefixes are fixed.
+         * <p>Integer arithmetic; scaling down truncates towards zero and an {@link ArithmeticException}
+         * is thrown if the conversion factor exceeds 10<sup>9</sup> (for both up and down scaling) or the conversion
+         * calculation overflows.
+         *
+         * @param sourceValue the value to convert
+         * @return the converted value (possibly truncated)
+         * @throws ArithmeticException if the conversion factor is beyond 10^9 (for both up and down scaling) or
+         * the conversion calculation overflows
+         */
+        int convert(int sourceValue);
     }
 
     /**

@@ -73,6 +73,28 @@ public final class SiPrefixConverter {
     }
 
     /**
+     * Converts an {@code int} value from a source SI prefix to a target SI prefix.
+     *
+     * <p>Uses integer arithmetic. When scaling down (division), the result is truncated towards zero.
+     * Throws {@link ArithmeticException} if the required conversion factor exceeds 10<sup>9</sup>
+     * (for both up and down scaling) or the conversion calculation overflows.
+     *
+     * @param sourceSiPrefix the prefix the {@code sourceValue} is currently expressed in
+     * @param targetSiPrefix the prefix to convert to
+     * @param sourceValue    the value to convert
+     * @return the converted value (possibly truncated)
+     * @throws NullPointerException if any prefix is {@code null}
+     * @throws ArithmeticException  if the required conversion factor is beyond 10^9 (for both up and down scaling) or
+     *                              the conversion calculation overflows
+     */
+    public static int convert(final SiPrefix sourceSiPrefix, final SiPrefix targetSiPrefix, final int sourceValue) {
+        Objects.requireNonNull(sourceSiPrefix, SOURCE_SI_PREFIX_NULL_CHECK_MSG);
+        Objects.requireNonNull(targetSiPrefix, TARGET_SI_PREFIX_NULL_CHECK_MSG);
+
+        return doConvertInt(sourceSiPrefix, targetSiPrefix, sourceValue);
+    }
+
+    /**
      * Converts a {@link java.math.BigInteger} value from a source SI prefix to a target SI prefix.
      *
      * @param sourceSiPrefix the prefix the {@code sourceValue} is currently expressed in
@@ -123,6 +145,14 @@ public final class SiPrefixConverter {
         return factorApplicationStrategy.applyAsLong(sourceValue, conversionFactor);
     }
 
+    private static int doConvertInt(final SiPrefix sourceSiPrefix, final SiPrefix targetSiPrefix, final int sourceValue) {
+        final int conversionExponent = calculateConversionExponent(sourceSiPrefix, targetSiPrefix);
+        final int conversionFactor = ConversionLookupInt.getConversionFactor(conversionExponent);
+        final IntBinaryOperator factorApplicationStrategy = ConversionLookupInt.getFactorApplicationStrategy(conversionExponent);
+
+        return factorApplicationStrategy.applyAsInt(sourceValue, conversionFactor);
+    }
+
     private static BigInteger doConvertBigInteger(final SiPrefix sourceSiPrefix, final SiPrefix targetSiPrefix, final BigInteger sourceValue) {
         Objects.requireNonNull(sourceValue, "sourceValue must not be null");
 
@@ -133,7 +163,10 @@ public final class SiPrefixConverter {
         return factorApplicationStrategy.apply(sourceValue, conversionFactor);
     }
 
-    private enum SiPrefixDoubleConverterBuilder implements SiPrefixConverterBuilder<SiPrefixConverterBuilder.FixedSourceDoubleConverter, SiPrefixConverterBuilder.FixedTargetDoubleConverter, SiPrefixConverterBuilder.FixedDoubleConverter> {
+    private enum SiPrefixDoubleConverterBuilder implements
+            SiPrefixConverterBuilder<SiPrefixConverterBuilder.FixedSourceDoubleConverter,
+                    SiPrefixConverterBuilder.FixedTargetDoubleConverter,
+                    SiPrefixConverterBuilder.FixedDoubleConverter> {
         INSTANCE;
 
         @Override
@@ -162,7 +195,10 @@ public final class SiPrefixConverter {
         }
     }
 
-    private enum SiPrefixLongConverterBuilder implements SiPrefixConverterBuilder<SiPrefixConverterBuilder.FixedSourceLongConverter, SiPrefixConverterBuilder.FixedTargetLongConverter, SiPrefixConverterBuilder.FixedLongConverter> {
+    private enum SiPrefixLongConverterBuilder implements
+            SiPrefixConverterBuilder<SiPrefixConverterBuilder.FixedSourceLongConverter,
+                    SiPrefixConverterBuilder.FixedTargetLongConverter,
+                    SiPrefixConverterBuilder.FixedLongConverter> {
         INSTANCE;
 
         @Override
@@ -192,7 +228,43 @@ public final class SiPrefixConverter {
         }
     }
 
-    private enum SiPrefixBigIntegerConverterBuilder implements SiPrefixConverterBuilder<SiPrefixConverterBuilder.FixedSourceBigIntegerConverter, SiPrefixConverterBuilder.FixedTargetBigIntegerConverter, SiPrefixConverterBuilder.FixedBigIntegerConverter> {
+    private enum SiPrefixIntConverterBuilder implements
+            SiPrefixConverterBuilder<SiPrefixConverterBuilder.FixedSourceIntConverter,
+                    SiPrefixConverterBuilder.FixedTargetIntConverter,
+                    SiPrefixConverterBuilder.FixedIntConverter> {
+        INSTANCE;
+
+        @Override
+        public FixedSourceIntConverter fixedSourcePrefixConverter(final SiPrefix sourceSiPrefix) {
+            Objects.requireNonNull(sourceSiPrefix, SOURCE_SI_PREFIX_NULL_CHECK_MSG);
+
+            return (SiPrefix targetSiPrefix, int sourceValue) -> doConvertInt(sourceSiPrefix, targetSiPrefix, sourceValue);
+        }
+
+        @Override
+        public FixedTargetIntConverter fixedTargetPrefixConverter(final SiPrefix targetSiPrefix) {
+            Objects.requireNonNull(targetSiPrefix, TARGET_SI_PREFIX_NULL_CHECK_MSG);
+
+            return (SiPrefix sourceSiPrefix, int sourceValue) -> doConvertInt(sourceSiPrefix, targetSiPrefix, sourceValue);
+        }
+
+        @Override
+        public FixedIntConverter fixedConverter(final SiPrefix sourceSiPrefix, final SiPrefix targetSiPrefix) {
+            Objects.requireNonNull(sourceSiPrefix, SOURCE_SI_PREFIX_NULL_CHECK_MSG);
+            Objects.requireNonNull(targetSiPrefix, TARGET_SI_PREFIX_NULL_CHECK_MSG);
+
+            final int conversionExponent = calculateConversionExponent(sourceSiPrefix, targetSiPrefix);
+            final int conversionFactor = ConversionLookupInt.getConversionFactor(conversionExponent);
+            final IntBinaryOperator factorApplicationStrategy = ConversionLookupInt.getFactorApplicationStrategy(conversionExponent);
+
+            return (int sourceValue) -> factorApplicationStrategy.applyAsInt(sourceValue, conversionFactor);
+        }
+    }
+
+    private enum SiPrefixBigIntegerConverterBuilder implements
+            SiPrefixConverterBuilder<SiPrefixConverterBuilder.FixedSourceBigIntegerConverter,
+                    SiPrefixConverterBuilder.FixedTargetBigIntegerConverter,
+                    SiPrefixConverterBuilder.FixedBigIntegerConverter> {
         INSTANCE;
 
         @Override
@@ -236,6 +308,11 @@ public final class SiPrefixConverter {
         @Override
         public SiPrefixConverterBuilder<SiPrefixConverterBuilder.FixedSourceLongConverter, SiPrefixConverterBuilder.FixedTargetLongConverter, SiPrefixConverterBuilder.FixedLongConverter> forLong() {
             return SiPrefixLongConverterBuilder.INSTANCE;
+        }
+
+        @Override
+        public SiPrefixConverterBuilder<SiPrefixConverterBuilder.FixedSourceIntConverter, SiPrefixConverterBuilder.FixedTargetIntConverter, SiPrefixConverterBuilder.FixedIntConverter> forInt() {
+            return SiPrefixIntConverterBuilder.INSTANCE;
         }
 
         @Override
@@ -310,6 +387,41 @@ final class ConversionLookupLong {
     }
 
     static LongBinaryOperator getFactorApplicationStrategy(final int index) {
+        final int strategyIndex = Integer.signum(index) + 1;
+        return FACTOR_APPLICATION_STRATEGIES[strategyIndex];
+    }
+}
+
+final class ConversionLookupInt {
+    private static final int[] CONVERSION_FACTOR_LOOKUP_TABLE = {
+            10,
+            100,
+            1_000,
+            10_000,
+            100_000,
+            1_000_000,
+            10_000_000,
+            100_000_000,
+            1_000_000_000
+    };
+
+    private static final IntBinaryOperator[] FACTOR_APPLICATION_STRATEGIES = {
+            (a, b) -> a / b,
+            (a, b) -> a,
+            Math::multiplyExact
+    };
+
+    static int getConversionFactor(final int index) {
+        final int conversionFactorLookupIndex = Math.abs(index - Integer.signum(index));
+
+        if (conversionFactorLookupIndex >= CONVERSION_FACTOR_LOOKUP_TABLE.length) {
+            throw new ArithmeticException("Required conversion factor exceeds supported range for long (max 10^9). Index was " + index);
+        }
+
+        return CONVERSION_FACTOR_LOOKUP_TABLE[conversionFactorLookupIndex];
+    }
+
+    static IntBinaryOperator getFactorApplicationStrategy(final int index) {
         final int strategyIndex = Integer.signum(index) + 1;
         return FACTOR_APPLICATION_STRATEGIES[strategyIndex];
     }
