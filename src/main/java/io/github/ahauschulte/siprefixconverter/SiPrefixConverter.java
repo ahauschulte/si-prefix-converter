@@ -324,196 +324,196 @@ public final class SiPrefixConverter {
             return SiPrefixBigIntegerConverterBuilder.INSTANCE;
         }
     }
-}
 
-final class ConversionLookupDouble {
-    private static final double[] CONVERSION_FACTOR_LOOKUP_TABLE = {
-            1.e-60,
-            1.e-59, 1.e-58, 1.e-57, 1.e-56, 1.e-55, 1.e-54, 1.e-53, 1.e-52, 1.e-51, 1.e-50,
-            1.e-49, 1.e-48, 1.e-47, 1.e-46, 1.e-45, 1.e-44, 1.e-43, 1.e-42, 1.e-41, 1.e-40,
-            1.e-39, 1.e-38, 1.e-37, 1.e-36, 1.e-35, 1.e-34, 1.e-33, 1.e-32, 1.e-31, 1.e-30,
-            1.e-29, 1.e-28, 1.e-27, 1.e-26, 1.e-25, 1.e-24, 1.e-23, 1.e-22, 1.e-21, 1.e-20,
-            1.e-19, 1.e-18, 1.e-17, 1.e-16, 1.e-15, 1.e-14, 1.e-13, 1.e-12, 1.e-11, 1.e-10,
-            1.e-9, 1.e-8, 1.e-7, 1.e-6, 1.e-5, 1.e-4, 1.e-3, 1.e-2, 1.e-1,
-            1.e0,
-            1.e1, 1.e2, 1.e3, 1.e4, 1.e5, 1.e6, 1.e7, 1.e8, 1.e9, 1.e10,
-            1.e11, 1.e12, 1.e13, 1.e14, 1.e15, 1.e16, 1.e17, 1.e18, 1.e19, 1.e20,
-            1.e21, 1.e22, 1.e23, 1.e24, 1.e25, 1.e26, 1.e27, 1.e28, 1.e29, 1.e30,
-            1.e31, 1.e32, 1.e33, 1.e34, 1.e35, 1.e36, 1.e37, 1.e38, 1.e39, 1.e40,
-            1.e41, 1.e42, 1.e43, 1.e44, 1.e45, 1.e46, 1.e47, 1.e48, 1.e49, 1.e50,
-            1.e51, 1.e52, 1.e53, 1.e54, 1.e55, 1.e56, 1.e57, 1.e58, 1.e59, 1.e60
-    };
+    private static final class ConversionLookupDouble {
+        private static final double[] CONVERSION_FACTOR_LOOKUP_TABLE = {
+                1.e-60,
+                1.e-59, 1.e-58, 1.e-57, 1.e-56, 1.e-55, 1.e-54, 1.e-53, 1.e-52, 1.e-51, 1.e-50,
+                1.e-49, 1.e-48, 1.e-47, 1.e-46, 1.e-45, 1.e-44, 1.e-43, 1.e-42, 1.e-41, 1.e-40,
+                1.e-39, 1.e-38, 1.e-37, 1.e-36, 1.e-35, 1.e-34, 1.e-33, 1.e-32, 1.e-31, 1.e-30,
+                1.e-29, 1.e-28, 1.e-27, 1.e-26, 1.e-25, 1.e-24, 1.e-23, 1.e-22, 1.e-21, 1.e-20,
+                1.e-19, 1.e-18, 1.e-17, 1.e-16, 1.e-15, 1.e-14, 1.e-13, 1.e-12, 1.e-11, 1.e-10,
+                1.e-9, 1.e-8, 1.e-7, 1.e-6, 1.e-5, 1.e-4, 1.e-3, 1.e-2, 1.e-1,
+                1.e0,
+                1.e1, 1.e2, 1.e3, 1.e4, 1.e5, 1.e6, 1.e7, 1.e8, 1.e9, 1.e10,
+                1.e11, 1.e12, 1.e13, 1.e14, 1.e15, 1.e16, 1.e17, 1.e18, 1.e19, 1.e20,
+                1.e21, 1.e22, 1.e23, 1.e24, 1.e25, 1.e26, 1.e27, 1.e28, 1.e29, 1.e30,
+                1.e31, 1.e32, 1.e33, 1.e34, 1.e35, 1.e36, 1.e37, 1.e38, 1.e39, 1.e40,
+                1.e41, 1.e42, 1.e43, 1.e44, 1.e45, 1.e46, 1.e47, 1.e48, 1.e49, 1.e50,
+                1.e51, 1.e52, 1.e53, 1.e54, 1.e55, 1.e56, 1.e57, 1.e58, 1.e59, 1.e60
+        };
 
-    private static final int CONVERSION_FACTOR_LOOKUP_INDEX_OFFSET = CONVERSION_FACTOR_LOOKUP_TABLE.length / 2;
+        private static final int CONVERSION_FACTOR_LOOKUP_INDEX_OFFSET = CONVERSION_FACTOR_LOOKUP_TABLE.length / 2;
 
-    static double getConversionFactor(final int conversionExponent) {
-        final int conversionFactorLookupIndex = conversionExponent + CONVERSION_FACTOR_LOOKUP_INDEX_OFFSET;
-        return CONVERSION_FACTOR_LOOKUP_TABLE[conversionFactorLookupIndex];
-    }
-}
-
-final class ConversionLookupLong {
-
-    record ConversionData (long conversionFactor, LongBinaryOperator factorApplicationStrategy) {}
-
-    private static final int MAX_LONG_EXPONENT = 18;
-    private static final int CONVERSION_DATA_LOOKUP_TABLE_SIZE = 2 * (SiPrefix.values()[SiPrefix.values().length - 1].exponent() - SiPrefix.values()[0].exponent()) + 1;
-    private static final int CONVERSION_DATA_LOOKUP_INDEX_OFFSET = CONVERSION_DATA_LOOKUP_TABLE_SIZE / 2;
-
-    private static final ConversionData[] CONVERSION_DATA_LOOKUP_TABLE = new ConversionData[CONVERSION_DATA_LOOKUP_TABLE_SIZE];
-
-    private static final ConversionData CONVERSION_DATA_ZERO = new ConversionData(0L, (a, b) -> 0L);
-    private static final ConversionData CONVERSION_DATA_IDENTITY = new ConversionData(0L, (a, b) -> a);
-    private static final ConversionData CONVERSION_DATA_OVERFLOW = new ConversionData(0L,
-            (a, b) -> { throw new ArithmeticException("Required conversion factor exceeds supported range for long (max 10^18)"); });
-
-    static {
-        for (int exponent = -CONVERSION_DATA_LOOKUP_INDEX_OFFSET; exponent < -MAX_LONG_EXPONENT; ++exponent) {
-            CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(exponent)] = CONVERSION_DATA_ZERO;
-        }
-        long conversionFactor = 1_000_000_000_000_000_000L;
-        for (int exponent = -MAX_LONG_EXPONENT ; exponent < 0; ++exponent) {
-            CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(exponent)] = new ConversionData(conversionFactor, (a, b) -> a / b);
-            conversionFactor /= 10L;
-        }
-        CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(0)] = CONVERSION_DATA_IDENTITY;
-        for (int exponent = 1 ; exponent <= MAX_LONG_EXPONENT; ++exponent) {
-            conversionFactor *= 10L;
-            CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(exponent)] = new ConversionData(conversionFactor, Math::multiplyExact);
-        }
-        for (int exponent = MAX_LONG_EXPONENT + 1; exponent <= CONVERSION_DATA_LOOKUP_INDEX_OFFSET; ++exponent) {
-            CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(exponent)] = CONVERSION_DATA_OVERFLOW;
+        static double getConversionFactor(final int conversionExponent) {
+            final int conversionFactorLookupIndex = conversionExponent + CONVERSION_FACTOR_LOOKUP_INDEX_OFFSET;
+            return CONVERSION_FACTOR_LOOKUP_TABLE[conversionFactorLookupIndex];
         }
     }
 
-    private static int exponentToIndex(final int exponent) {
-        return exponent + CONVERSION_DATA_LOOKUP_INDEX_OFFSET;
-    }
+    private static final class ConversionLookupLong {
 
-    static ConversionData getConversionData(final int conversionExponent) {
-        return CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(conversionExponent)];
-    }
-}
+        record ConversionData (long conversionFactor, LongBinaryOperator factorApplicationStrategy) {}
 
-final class ConversionLookupInt {
-    record ConversionData (int conversionFactor, IntBinaryOperator factorApplicationStrategy) {}
+        private static final int MAX_LONG_EXPONENT = 18;
+        private static final int CONVERSION_DATA_LOOKUP_TABLE_SIZE = 2 * (SiPrefix.values()[SiPrefix.values().length - 1].exponent() - SiPrefix.values()[0].exponent()) + 1;
+        private static final int CONVERSION_DATA_LOOKUP_INDEX_OFFSET = CONVERSION_DATA_LOOKUP_TABLE_SIZE / 2;
 
-    private static final int MAX_INT_EXPONENT = 9;
-    private static final int CONVERSION_DATA_LOOKUP_TABLE_SIZE = 2 * (SiPrefix.values()[SiPrefix.values().length - 1].exponent() - SiPrefix.values()[0].exponent()) + 1;
-    private static final int CONVERSION_DATA_LOOKUP_INDEX_OFFSET = CONVERSION_DATA_LOOKUP_TABLE_SIZE / 2;
+        private static final ConversionData[] CONVERSION_DATA_LOOKUP_TABLE = new ConversionData[CONVERSION_DATA_LOOKUP_TABLE_SIZE];
 
-    private static final ConversionData[] CONVERSION_DATA_LOOKUP_TABLE = new ConversionData[CONVERSION_DATA_LOOKUP_TABLE_SIZE];
+        private static final ConversionData CONVERSION_DATA_ZERO = new ConversionData(0L, (a, b) -> 0L);
+        private static final ConversionData CONVERSION_DATA_IDENTITY = new ConversionData(0L, (a, b) -> a);
+        private static final ConversionData CONVERSION_DATA_OVERFLOW = new ConversionData(0L,
+                (a, b) -> { throw new ArithmeticException("Required conversion factor exceeds supported range for long (max 10^18)"); });
 
-    private static final ConversionData CONVERSION_DATA_ZERO = new ConversionData(0, (a, b) -> 0);
-    private static final ConversionData CONVERSION_DATA_IDENTITY = new ConversionData(0, (a, b) -> a);
-    private static final ConversionData CONVERSION_DATA_OVERFLOW = new ConversionData(0,
-            (a, b) -> { throw new ArithmeticException("Required conversion factor exceeds supported range for int (max 10^9)"); });
-
-    static {
-        for (int i = -CONVERSION_DATA_LOOKUP_INDEX_OFFSET; i < -MAX_INT_EXPONENT; ++i) {
-            CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(i)] = CONVERSION_DATA_ZERO;
+        static {
+            for (int exponent = -CONVERSION_DATA_LOOKUP_INDEX_OFFSET; exponent < -MAX_LONG_EXPONENT; ++exponent) {
+                CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(exponent)] = CONVERSION_DATA_ZERO;
+            }
+            long conversionFactor = 1_000_000_000_000_000_000L;
+            for (int exponent = -MAX_LONG_EXPONENT ; exponent < 0; ++exponent) {
+                CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(exponent)] = new ConversionData(conversionFactor, (a, b) -> a / b);
+                conversionFactor /= 10L;
+            }
+            CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(0)] = CONVERSION_DATA_IDENTITY;
+            for (int exponent = 1 ; exponent <= MAX_LONG_EXPONENT; ++exponent) {
+                conversionFactor *= 10L;
+                CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(exponent)] = new ConversionData(conversionFactor, Math::multiplyExact);
+            }
+            for (int exponent = MAX_LONG_EXPONENT + 1; exponent <= CONVERSION_DATA_LOOKUP_INDEX_OFFSET; ++exponent) {
+                CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(exponent)] = CONVERSION_DATA_OVERFLOW;
+            }
         }
-        for (int i = -MAX_INT_EXPONENT ; i < 0; ++i) {
-            CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(i)] = new ConversionData(BigInteger.TEN.pow(-i).intValue(), (a, b) -> a / b);
+
+        private static int exponentToIndex(final int exponent) {
+            return exponent + CONVERSION_DATA_LOOKUP_INDEX_OFFSET;
         }
-        CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(0)] = CONVERSION_DATA_IDENTITY;
-        for (int i = 1 ; i <= MAX_INT_EXPONENT; ++i) {
-            CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(i)] = new ConversionData(BigInteger.TEN.pow(i).intValue(), Math::multiplyExact);
-        }
-        for (int i = MAX_INT_EXPONENT + 1; i <= CONVERSION_DATA_LOOKUP_INDEX_OFFSET; ++i) {
-            CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(i)] = CONVERSION_DATA_OVERFLOW;
+
+        static ConversionData getConversionData(final int conversionExponent) {
+            return CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(conversionExponent)];
         }
     }
 
-    private static int exponentToIndex(final int exponent) {
-        return exponent + CONVERSION_DATA_LOOKUP_INDEX_OFFSET;
+    private static final class ConversionLookupInt {
+        record ConversionData (int conversionFactor, IntBinaryOperator factorApplicationStrategy) {}
+
+        private static final int MAX_INT_EXPONENT = 9;
+        private static final int CONVERSION_DATA_LOOKUP_TABLE_SIZE = 2 * (SiPrefix.values()[SiPrefix.values().length - 1].exponent() - SiPrefix.values()[0].exponent()) + 1;
+        private static final int CONVERSION_DATA_LOOKUP_INDEX_OFFSET = CONVERSION_DATA_LOOKUP_TABLE_SIZE / 2;
+
+        private static final ConversionData[] CONVERSION_DATA_LOOKUP_TABLE = new ConversionData[CONVERSION_DATA_LOOKUP_TABLE_SIZE];
+
+        private static final ConversionData CONVERSION_DATA_ZERO = new ConversionData(0, (a, b) -> 0);
+        private static final ConversionData CONVERSION_DATA_IDENTITY = new ConversionData(0, (a, b) -> a);
+        private static final ConversionData CONVERSION_DATA_OVERFLOW = new ConversionData(0,
+                (a, b) -> { throw new ArithmeticException("Required conversion factor exceeds supported range for int (max 10^9)"); });
+
+        static {
+            for (int i = -CONVERSION_DATA_LOOKUP_INDEX_OFFSET; i < -MAX_INT_EXPONENT; ++i) {
+                CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(i)] = CONVERSION_DATA_ZERO;
+            }
+            for (int i = -MAX_INT_EXPONENT ; i < 0; ++i) {
+                CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(i)] = new ConversionData(BigInteger.TEN.pow(-i).intValue(), (a, b) -> a / b);
+            }
+            CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(0)] = CONVERSION_DATA_IDENTITY;
+            for (int i = 1 ; i <= MAX_INT_EXPONENT; ++i) {
+                CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(i)] = new ConversionData(BigInteger.TEN.pow(i).intValue(), Math::multiplyExact);
+            }
+            for (int i = MAX_INT_EXPONENT + 1; i <= CONVERSION_DATA_LOOKUP_INDEX_OFFSET; ++i) {
+                CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(i)] = CONVERSION_DATA_OVERFLOW;
+            }
+        }
+
+        private static int exponentToIndex(final int exponent) {
+            return exponent + CONVERSION_DATA_LOOKUP_INDEX_OFFSET;
+        }
+
+        static ConversionData getConversionData(final int conversionExponent) {
+            return CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(conversionExponent)];
+        }
     }
 
-    static ConversionData getConversionData(final int conversionExponent) {
-        return CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(conversionExponent)];
-    }
-}
+    private static final class ConversionLookupBigInteger {
+        private static final BigInteger[] CONVERSION_FACTOR_LOOKUP_TABLE = {
+                BigInteger.TEN,
+                BigInteger.TEN.pow(2),
+                BigInteger.TEN.pow(3),
+                BigInteger.TEN.pow(4),
+                BigInteger.TEN.pow(5),
+                BigInteger.TEN.pow(6),
+                BigInteger.TEN.pow(7),
+                BigInteger.TEN.pow(8),
+                BigInteger.TEN.pow(9),
+                BigInteger.TEN.pow(10),
+                BigInteger.TEN.pow(11),
+                BigInteger.TEN.pow(12),
+                BigInteger.TEN.pow(13),
+                BigInteger.TEN.pow(14),
+                BigInteger.TEN.pow(15),
+                BigInteger.TEN.pow(16),
+                BigInteger.TEN.pow(17),
+                BigInteger.TEN.pow(18),
+                BigInteger.TEN.pow(19),
+                BigInteger.TEN.pow(20),
+                BigInteger.TEN.pow(21),
+                BigInteger.TEN.pow(22),
+                BigInteger.TEN.pow(23),
+                BigInteger.TEN.pow(24),
+                BigInteger.TEN.pow(25),
+                BigInteger.TEN.pow(26),
+                BigInteger.TEN.pow(27),
+                BigInteger.TEN.pow(28),
+                BigInteger.TEN.pow(29),
+                BigInteger.TEN.pow(30),
+                BigInteger.TEN.pow(31),
+                BigInteger.TEN.pow(32),
+                BigInteger.TEN.pow(33),
+                BigInteger.TEN.pow(34),
+                BigInteger.TEN.pow(35),
+                BigInteger.TEN.pow(36),
+                BigInteger.TEN.pow(37),
+                BigInteger.TEN.pow(38),
+                BigInteger.TEN.pow(39),
+                BigInteger.TEN.pow(40),
+                BigInteger.TEN.pow(41),
+                BigInteger.TEN.pow(42),
+                BigInteger.TEN.pow(43),
+                BigInteger.TEN.pow(44),
+                BigInteger.TEN.pow(45),
+                BigInteger.TEN.pow(46),
+                BigInteger.TEN.pow(47),
+                BigInteger.TEN.pow(48),
+                BigInteger.TEN.pow(49),
+                BigInteger.TEN.pow(50),
+                BigInteger.TEN.pow(51),
+                BigInteger.TEN.pow(52),
+                BigInteger.TEN.pow(53),
+                BigInteger.TEN.pow(54),
+                BigInteger.TEN.pow(55),
+                BigInteger.TEN.pow(56),
+                BigInteger.TEN.pow(57),
+                BigInteger.TEN.pow(58),
+                BigInteger.TEN.pow(59),
+                BigInteger.TEN.pow(60)
+        };
 
-final class ConversionLookupBigInteger {
-    private static final BigInteger[] CONVERSION_FACTOR_LOOKUP_TABLE = {
-            BigInteger.TEN,
-            BigInteger.TEN.pow(2),
-            BigInteger.TEN.pow(3),
-            BigInteger.TEN.pow(4),
-            BigInteger.TEN.pow(5),
-            BigInteger.TEN.pow(6),
-            BigInteger.TEN.pow(7),
-            BigInteger.TEN.pow(8),
-            BigInteger.TEN.pow(9),
-            BigInteger.TEN.pow(10),
-            BigInteger.TEN.pow(11),
-            BigInteger.TEN.pow(12),
-            BigInteger.TEN.pow(13),
-            BigInteger.TEN.pow(14),
-            BigInteger.TEN.pow(15),
-            BigInteger.TEN.pow(16),
-            BigInteger.TEN.pow(17),
-            BigInteger.TEN.pow(18),
-            BigInteger.TEN.pow(19),
-            BigInteger.TEN.pow(20),
-            BigInteger.TEN.pow(21),
-            BigInteger.TEN.pow(22),
-            BigInteger.TEN.pow(23),
-            BigInteger.TEN.pow(24),
-            BigInteger.TEN.pow(25),
-            BigInteger.TEN.pow(26),
-            BigInteger.TEN.pow(27),
-            BigInteger.TEN.pow(28),
-            BigInteger.TEN.pow(29),
-            BigInteger.TEN.pow(30),
-            BigInteger.TEN.pow(31),
-            BigInteger.TEN.pow(32),
-            BigInteger.TEN.pow(33),
-            BigInteger.TEN.pow(34),
-            BigInteger.TEN.pow(35),
-            BigInteger.TEN.pow(36),
-            BigInteger.TEN.pow(37),
-            BigInteger.TEN.pow(38),
-            BigInteger.TEN.pow(39),
-            BigInteger.TEN.pow(40),
-            BigInteger.TEN.pow(41),
-            BigInteger.TEN.pow(42),
-            BigInteger.TEN.pow(43),
-            BigInteger.TEN.pow(44),
-            BigInteger.TEN.pow(45),
-            BigInteger.TEN.pow(46),
-            BigInteger.TEN.pow(47),
-            BigInteger.TEN.pow(48),
-            BigInteger.TEN.pow(49),
-            BigInteger.TEN.pow(50),
-            BigInteger.TEN.pow(51),
-            BigInteger.TEN.pow(52),
-            BigInteger.TEN.pow(53),
-            BigInteger.TEN.pow(54),
-            BigInteger.TEN.pow(55),
-            BigInteger.TEN.pow(56),
-            BigInteger.TEN.pow(57),
-            BigInteger.TEN.pow(58),
-            BigInteger.TEN.pow(59),
-            BigInteger.TEN.pow(60)
-    };
+        private interface BigIntegerBinaryOperator extends BinaryOperator<BigInteger> {
+        }
 
-    private interface BigIntegerBinaryOperator extends BinaryOperator<BigInteger> {
-    }
+        private static final BigIntegerBinaryOperator[] FACTOR_APPLICATION_STRATEGIES = new BigIntegerBinaryOperator[]{
+                BigInteger::divide,
+                (a, b) -> a,
+                BigInteger::multiply
+        };
 
-    private static final BigIntegerBinaryOperator[] FACTOR_APPLICATION_STRATEGIES = new BigIntegerBinaryOperator[]{
-            BigInteger::divide,
-            (a, b) -> a,
-            BigInteger::multiply
-    };
+        static BigInteger getConversionFactor(final int conversionExponent) {
+            final int conversionFactorLookupIndex = Math.abs(conversionExponent - Integer.signum(conversionExponent));
+            return CONVERSION_FACTOR_LOOKUP_TABLE[conversionFactorLookupIndex];
+        }
 
-    static BigInteger getConversionFactor(final int conversionExponent) {
-        final int conversionFactorLookupIndex = Math.abs(conversionExponent - Integer.signum(conversionExponent));
-        return CONVERSION_FACTOR_LOOKUP_TABLE[conversionFactorLookupIndex];
-    }
-
-    static BinaryOperator<BigInteger> getFactorApplicationStrategy(final int conversionExponent) {
-        final int strategyIndex = Integer.signum(conversionExponent) + 1;
-        return FACTOR_APPLICATION_STRATEGIES[strategyIndex];
+        static BinaryOperator<BigInteger> getFactorApplicationStrategy(final int conversionExponent) {
+            final int strategyIndex = Integer.signum(conversionExponent) + 1;
+            return FACTOR_APPLICATION_STRATEGIES[strategyIndex];
+        }
     }
 }

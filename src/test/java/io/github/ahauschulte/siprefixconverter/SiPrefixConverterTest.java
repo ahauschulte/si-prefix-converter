@@ -32,6 +32,7 @@ class SiPrefixConverterTest {
     @Test
     void testConversionRangeLong() {
         assertEquals(1_000_000_000_000_000_000L, SiPrefixConverter.convert(SiPrefix.TERA, SiPrefix.MICRO, 1L));
+        assertEquals(0L, SiPrefixConverter.convert(SiPrefix.QUECTO, SiPrefix.QUETTA, 1_000_000_000_000_000_000L));
 
         assertEquals(0L, SiPrefixConverter.convert(SiPrefix.DECI, SiPrefix.DECA, 20L));
 
@@ -47,6 +48,7 @@ class SiPrefixConverterTest {
     @Test
     void testConversionRangeInt() {
         assertEquals(1_000_000_000, SiPrefixConverter.convert(SiPrefix.TERA, SiPrefix.KILO, 1));
+        assertEquals(0L, SiPrefixConverter.convert(SiPrefix.QUECTO, SiPrefix.QUETTA, 1_000_000_000));
 
         assertEquals(0, SiPrefixConverter.convert(SiPrefix.DECI, SiPrefix.DECA, 20));
 
@@ -268,5 +270,4 @@ class SiPrefixConverterTest {
     void testSiPrefixConverterNotInstantiable() {
         assertThrows(AssertionError.class, () -> ReflectionSupport.newInstance(SiPrefixConverter.class));
     }
-
 }
