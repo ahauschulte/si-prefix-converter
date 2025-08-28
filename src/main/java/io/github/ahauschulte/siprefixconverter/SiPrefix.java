@@ -9,7 +9,7 @@ package io.github.ahauschulte.siprefixconverter;
  * <p><b>Usage</b>
  * {@snippet :
  * // Convert 2.5 kilometres (kilo) to metres (unit):
- * double metres = SiPrefixConverter.convert(SiPrefix.KILO, SiPrefix.UNIT, 2.5); // -> 2500.0
+ * double meters = SiPrefixConverter.convert(SiPrefix.KILO, SiPrefix.UNIT, 2.5); // -> 2500.0
  *
  * // Convert 3_000_000 nanoseconds (nano) to milliseconds (milli) using longs
  * long ms = SiPrefixConverter.convert(SiPrefix.NANO, SiPrefix.MILLI, 3_000_000L); // -> 3L

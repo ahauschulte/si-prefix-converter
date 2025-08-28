@@ -15,15 +15,15 @@ import java.util.function.*;
  * import io.github.ahauschulte.siprefixconverter.SiPrefixConverter;
  *
  * // Simple one-shot conversions
- * double metres = SiPrefixConverter.convert(SiPrefix.KILO, SiPrefix.UNIT, 3.2); // 3200.0
+ * double meters = SiPrefixConverter.convert(SiPrefix.KILO, SiPrefix.UNIT, 3.2); // 3200.0
  * long nanos    = SiPrefixConverter.convert(SiPrefix.MILLI, SiPrefix.NANO, 1L); // 1_000_000L
  *
  * // Builder API: fix source or target and reuse the converter
  * var fromKilo = SiPrefixConverter.builder().forDouble().fixedSourcePrefixConverter(SiPrefix.KILO);
- * double metres2 = fromKilo.convert(SiPrefix.UNIT, 2.5); // 2500.0
+ * double meters2 = fromKilo.convert(SiPrefix.UNIT, 2.5); // 2500.0
  *
  * var toMilli = SiPrefixConverter.builder().forLong().fixedTargetPrefixConverter(SiPrefix.MILLI);
- * long milliMetres = toMilli.convert(SiPrefix.UNIT, 1234L); // 1_234_000L
+ * long millimeters = toMilli.convert(SiPrefix.UNIT, 1234L); // 1_234_000L
  *}
  *
  * <p>Under {@code @NullMarked} (package level), all parameters are non-null by default. Passing {@code null} is a

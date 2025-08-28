@@ -16,7 +16,7 @@ import java.math.BigInteger;
  * // Prepare a converter for double values from kilo- to unit- (×1000)
  * var builder = SiPrefixConverter.builder().forDouble();
  * var kmToM   = builder.fixedConverter(SiPrefix.KILO, SiPrefix.UNIT);
- * double metres = kmToM.convert(1.2); // 1200.0
+ * double meters = kmToM.convert(1.2); // 1200.0
  *}
  *
  * @param <S> type of the Converter with the source SI prefix fixed

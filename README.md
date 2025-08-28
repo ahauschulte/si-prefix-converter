@@ -87,7 +87,7 @@ import io.github.ahauschulte.siprefixconverter.SiPrefix;
 import io.github.ahauschulte.siprefixconverter.SiPrefixConverter;
 
 // Doubles — full SI range
-double metres = SiPrefixConverter.convert(SiPrefix.KILO, SiPrefix.UNIT, 3.2); // 3200.0
+double meters = SiPrefixConverter.convert(SiPrefix.KILO, SiPrefix.UNIT, 3.2); // 3200.0
 
 // Longs — integer arithmetic (see rounding semantics below)
 long nanosLong = SiPrefixConverter.convert(SiPrefix.MILLI, SiPrefix.NANO, 1L);    // 1_000_000L
@@ -110,21 +110,21 @@ var fromKilo = SiPrefixConverter.builder()
         .forDouble()
         .fixedSourcePrefixConverter(SiPrefix.KILO);
 
-double metres = fromKilo.convert(SiPrefix.UNIT, 2.5); // 2500.0
+double meters = fromKilo.convert(SiPrefix.UNIT, 2.5); // 2500.0
         
 // Fix the target prefix for longs (? → milli)
 var toMilli = SiPrefixConverter.builder()
         .forLong()
         .fixedTargetPrefixConverter(SiPrefix.MILLI);
 
-long milliMetresLong = toMilli.convert(SiPrefix.UNIT, 1234L); // 1_234_000L
+long millimetersLong = toMilli.convert(SiPrefix.UNIT, 1234L); // 1_234_000L
 
 // Fix the target prefix for ints (? → milli)
 var toMilli = SiPrefixConverter.builder()
         .forInt()
         .fixedTargetPrefixConverter(SiPrefix.MILLI);
 
-int milliMetresInt = toMilli.convert(SiPrefix.UNIT, 1234); // 1_234_000
+int millimetersInt = toMilli.convert(SiPrefix.UNIT, 1234); // 1_234_000
 
 // Fix both for BigInteger (micro → unit)
 var microToUnit = SiPrefixConverter.builder()

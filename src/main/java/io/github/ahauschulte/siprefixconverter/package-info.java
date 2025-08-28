@@ -11,7 +11,7 @@
  * import io.github.ahauschulte.siprefixconverter.SiPrefixConverter;
  *
  * // Convert 12 kilometres to millimetres (result: 12_000_000.0)
- * double millimetres = SiPrefixConverter.convert(SiPrefix.KILO, SiPrefix.MILLI, 12.0);
+ * double millimeters = SiPrefixConverter.convert(SiPrefix.KILO, SiPrefix.MILLI, 12.0);
  *
  * // Convert 1_000_000 nanoseconds to milliseconds using longs (truncation towards zero)
  * long ms = SiPrefixConverter.convert(SiPrefix.NANO, SiPrefix.MILLI, 1_000_000L); // -> 1L
@@ -32,7 +32,7 @@
  *   <li><b>Longs</b>: uses integer arithmetic; scaling down truncates towards zero; conversion factors &gt; 10^18
  *   for up-scaling throw {@link java.lang.ArithmeticException ArithmeticException}.</li>
  *   <li><b>Ints</b>: uses integer arithmetic; scaling down truncates towards zero; conversion factors &gt; 10^9
- *  *   for up-scaling throw {@link java.lang.ArithmeticException ArithmeticException}.</li>
+ *   for up-scaling throw {@link java.lang.ArithmeticException ArithmeticException}.</li>
  *   <li><b>BigInteger</b>: supports the full SI range from quecto (10^-30) to quetta (10^30).</li>
  * </ul>
  */
