@@ -188,20 +188,20 @@ VM, 21.0.4+7-LTS, JMH 1.37, 2 warmup iterations, 4 measurement iterations, 1 for
 
 All conversions run in the nanosecond range, with predictable differences across API styles and data types.
 
-| Type           | Conversion | Static (ns/op) | Builder: Both prefixes fixed | Builder: Source prefix fixed | Builder: Target prefix fixed |
-|----------------|------------|----------------|------------------------------|------------------------------|------------------------------|
-| **int**        | UNIT:UNIT  | 1.24 ± 0.01    | 0.90 ± 0.04                  | 1.62 ± 0.11                  | 1.53 ± 0.05                  |
-|                | GIGA:KILO  | 1.37 ± 0.01    | 1.01 ± 0.04                  | 1.74 ± 0.07                  | 1.75 ± 0.01                  |
-|                | KILO:GIGA  | 1.40 ± 0.04    | 1.03 ± 0.08                  | 1.72 ± 0.09                  | 1.76 ± 0.01                  |
-| **long**       | UNIT:UNIT  | 1.17 ± 0.01    | 0.90 ± 0.04                  | 1.50 ± 0.05                  | 1.50 ± 0.03                  |
-|                | GIGA:KILO  | 1.38 ± 0.03    | 1.04 ± 0.03                  | 1.76 ± 0.04                  | 1.77 ± 0.08                  |
-|                | KILO:GIGA  | 1.30 ± 0.01    | 1.01 ± 0.01                  | 1.69 ± 0.03                  | 1.74 ± 0.00                  |
-| **double**     | UNIT:UNIT  | 0.96 ± 0.01    | 0.78 ± 0.01                  | 1.23 ± 0.01                  | 1.23 ± 0.01                  |
-|                | GIGA:KILO  | 0.97 ± 0.02    | 0.84 ± 0.19                  | 1.26 ± 0.08                  | 1.24 ± 0.06                  |
-|                | KILO:GIGA  | 0.91 ± 0.05    | 0.85 ± 0.07                  | 1.23 ± 0.01                  | 1.23 ± 0.00                  |
-| **BigInteger** | UNIT:UNIT  | 1.49 ± 0.07    | 1.02 ± 0.07                  | 1.69 ± 0.03                  | 1.70 ± 0.02                  |
-|                | GIGA:KILO  | 8.10 ± 0.13    | 7.07 ± 0.21                  | 8.42 ± 0.13                  | 8.45 ± 0.08                  |
-|                | KILO:GIGA  | 16.71 ± 0.15   | 15.46 ± 0.14                 | 17.52 ± 3.49                 | 17.11 ± 0.20                 |
+| Type           | Conversion | Static (ns/op) | Builder: Both prefixes fixed (ns/op) | Builder: Source prefix fixed (ns/op)  | Builder: Target prefix fixed (ns/op) |
+|----------------|------------|----------------|--------------------------------------|---------------------------------------|--------------------------------------|
+| **int**        | UNIT:UNIT  | 1.24 ± 0.01    | 0.90 ± 0.04                          | 1.62 ± 0.11                           | 1.53 ± 0.05                          |
+|                | GIGA:KILO  | 1.37 ± 0.01    | 1.01 ± 0.04                          | 1.74 ± 0.07                           | 1.75 ± 0.01                          |
+|                | KILO:GIGA  | 1.40 ± 0.04    | 1.03 ± 0.08                          | 1.72 ± 0.09                           | 1.76 ± 0.01                          |
+| **long**       | UNIT:UNIT  | 1.17 ± 0.01    | 0.90 ± 0.04                          | 1.50 ± 0.05                           | 1.50 ± 0.03                          |
+|                | GIGA:KILO  | 1.38 ± 0.03    | 1.04 ± 0.03                          | 1.76 ± 0.04                           | 1.77 ± 0.08                          |
+|                | KILO:GIGA  | 1.30 ± 0.01    | 1.01 ± 0.01                          | 1.69 ± 0.03                           | 1.74 ± 0.00                          |
+| **double**     | UNIT:UNIT  | 0.96 ± 0.01    | 0.78 ± 0.01                          | 1.23 ± 0.01                           | 1.23 ± 0.01                          |
+|                | GIGA:KILO  | 0.97 ± 0.02    | 0.84 ± 0.19                          | 1.26 ± 0.08                           | 1.24 ± 0.06                          |
+|                | KILO:GIGA  | 0.91 ± 0.05    | 0.85 ± 0.07                          | 1.23 ± 0.01                           | 1.23 ± 0.00                          |
+| **BigInteger** | UNIT:UNIT  | 1.49 ± 0.07    | 1.02 ± 0.07                          | 1.69 ± 0.03                           | 1.70 ± 0.02                          |
+|                | GIGA:KILO  | 8.10 ± 0.13    | 7.07 ± 0.21                          | 8.42 ± 0.13                           | 8.45 ± 0.08                          |
+|                | KILO:GIGA  | 16.71 ± 0.15   | 15.46 ± 0.14                         | 17.52 ± 3.49                          | 17.11 ± 0.20                         |
 
 (These numbers include only the conversion calls; builder creation cost is not measured).
 
