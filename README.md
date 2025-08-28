@@ -1,6 +1,7 @@
 # SI Prefix Converter
 
 [![Java CI with Maven](https://github.com/ahauschulte/si-prefix-converter/actions/workflows/maven.yml/badge.svg)](https://github.com/ahauschulte/si-prefix-converter/actions/workflows/maven.yml)
+[![CodeQL](https://github.com/ahauschulte/si-prefix-converter/actions/workflows/codeql.yml/badge.svg)](https://github.com/ahauschulte/si-prefix-converter/actions/workflows/codeql.yml)
 
 ## Summary
 
