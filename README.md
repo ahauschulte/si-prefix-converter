@@ -131,7 +131,7 @@ var microToUnit = SiPrefixConverter.builder()
         .forBigInteger()
         .fixedConverter(SiPrefix.MICRO, SiPrefix.UNIT);
 
-BigInteger exact = microToUnit.convert(java.math.BigInteger.valueOf(250_000)); // 250
+BigInteger units = microToUnit.convert(java.math.BigInteger.valueOf(250_000)); // 250
 ```
 
 ## API Overview
