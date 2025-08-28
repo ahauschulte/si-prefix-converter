@@ -1,5 +1,9 @@
 # SI Prefix Converter
 
+[![Java CI with Maven](https://github.com/ahauschulte/si-prefix-converter/actions/workflows/maven.yml/badge.svg)](https://github.com/ahauschulte/si-prefix-converter/actions/workflows/maven.yml)
+
+## Summary
+
 Concise utilities for converting numeric values between [SI prefixes](https://en.wikipedia.org/wiki/Metric_prefix) in Java.  
 The public API centres around three types:
 
