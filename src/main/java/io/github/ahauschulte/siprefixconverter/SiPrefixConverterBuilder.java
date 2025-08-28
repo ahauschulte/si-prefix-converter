@@ -183,7 +183,7 @@ public interface SiPrefixConverterBuilder<S, T, C> {
     }
 
     /**
-     * A converter for converting {@code longs}s with both source and target SI prefix fixed.
+     * A converter for converting {@code long}s with both source and target SI prefix fixed.
      */
     @FunctionalInterface
     interface FixedLongConverter {

@@ -11,7 +11,7 @@
  * import io.github.ahauschulte.siprefixconverter.SiPrefixConverter;
  *
  * // Convert 12 kilometres to millimetres (result: 12_000_000.0)
- * double millimeters = SiPrefixConverter.convert(SiPrefix.KILO, SiPrefix.MILLI, 12.0);
+ * double millimetres = SiPrefixConverter.convert(SiPrefix.KILO, SiPrefix.MILLI, 12.0);
  *
  * // Convert 1_000_000 nanoseconds to milliseconds using longs (truncation towards zero)
  * long ms = SiPrefixConverter.convert(SiPrefix.NANO, SiPrefix.MILLI, 1_000_000L); // -> 1L
