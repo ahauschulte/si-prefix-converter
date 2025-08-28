@@ -3,15 +3,15 @@
 [![Java CI with Maven](https://github.com/ahauschulte/si-prefix-converter/actions/workflows/maven.yml/badge.svg)](https://github.com/ahauschulte/si-prefix-converter/actions/workflows/maven.yml)
 [![CodeQL](https://github.com/ahauschulte/si-prefix-converter/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/ahauschulte/si-prefix-converter/actions/workflows/github-code-scanning/codeql)
 
-
 ## Summary
 
-Concise utilities for converting numeric values between [SI prefixes](https://en.wikipedia.org/wiki/Metric_prefix) in Java.  
+Concise utilities for converting numeric values between [SI prefixes](https://en.wikipedia.org/wiki/Metric_prefix) in
+Java.  
 The public API centres around three types:
 
 - `SiPrefix` — an enum of SI prefixes from **quecto** (10⁻³⁰) to **quetta** (10³⁰); `UNIT` represents 10⁰.
 - `SiPrefixConverter` — static, thread‑safe conversion methods for `double`, `long`, `int`, and `BigInteger`, plus a
-   builder entry point.
+  builder entry point.
 - `SiPrefixConverterBuilder` — a small, type‑safe builder that produces reusable converters (fix source/target prefixes,
   or both).
 
@@ -75,9 +75,9 @@ mvn install
 
 Then add the dependency to your project as shown above.
 
-## Quick start
+## Quick Start
 
-### One‑shot conversions
+### One‑Shot Conversions
 
 ```java
 import java.math.BigInteger;
@@ -88,17 +88,17 @@ import io.github.ahauschulte.siprefixconverter.SiPrefixConverter;
 // Doubles — full SI range
 double metres = SiPrefixConverter.convert(SiPrefix.KILO, SiPrefix.UNIT, 3.2); // 3200.0
 
-// Longs — integer arithmetic (see rounding semantics below)
-long nanosLong = SiPrefixConverter.convert(SiPrefix.MILLI, SiPrefix.NANO, 1L);    // 1_000_000L
-        
-// Ints — integer arithmetic (see rounding semantics below)
-int nanosInt = SiPrefixConverter.convert(SiPrefix.MILLI, SiPrefix.NANO, 1);    // 1_000_000
+        // Longs — integer arithmetic (see rounding semantics below)
+        long nanosLong = SiPrefixConverter.convert(SiPrefix.MILLI, SiPrefix.NANO, 1L);    // 1_000_000L
 
-// BigInteger — arbitrary precision
-BigInteger seconds = SiPrefixConverter.convert(SiPrefix.MICRO, SiPrefix.UNIT, BigInteger.valueOf(250_000)); // 250
+        // Ints — integer arithmetic (see rounding semantics below)
+        int nanosInt = SiPrefixConverter.convert(SiPrefix.MILLI, SiPrefix.NANO, 1);    // 1_000_000
+
+        // BigInteger — arbitrary precision
+        BigInteger seconds = SiPrefixConverter.convert(SiPrefix.MICRO, SiPrefix.UNIT, BigInteger.valueOf(250_000)); // 250
 ```
 
-### Reusable converters (builder)
+### Reusable Converters via Builders
 
 ```java
 import java.math.BigInteger;
@@ -111,31 +111,31 @@ var fromKilo = SiPrefixConverter.builder()
         .forDouble()
         .fixedSourcePrefixConverter(SiPrefix.KILO);
 
-double metres2 = fromKilo.convert(SiPrefix.UNIT, 2.5); // 2500.0
+        double metres2 = fromKilo.convert(SiPrefix.UNIT, 2.5); // 2500.0
 
-// Fix the target prefix for longs (? → milli)
-var toMilli = SiPrefixConverter.builder()
-        .forLong()
-        .fixedTargetPrefixConverter(SiPrefix.MILLI);
+        // Fix the target prefix for longs (? → milli)
+        var toMilli = SiPrefixConverter.builder()
+                .forLong()
+                .fixedTargetPrefixConverter(SiPrefix.MILLI);
 
-long milliMetresLong = toMilli.convert(SiPrefix.UNIT, 1234L); // 1_234_000L
+        long milliMetresLong = toMilli.convert(SiPrefix.UNIT, 1234L); // 1_234_000L
 
-// Fix the target prefix for ints (? → milli)
-var toMilli = SiPrefixConverter.builder()
-        .forInt()
-        .fixedTargetPrefixConverter(SiPrefix.MILLI);
+        // Fix the target prefix for ints (? → milli)
+        var toMilli = SiPrefixConverter.builder()
+                .forInt()
+                .fixedTargetPrefixConverter(SiPrefix.MILLI);
 
-int milliMetresInt = toMilli.convert(SiPrefix.UNIT, 1234); // 1_234_000
-        
-// Fix both for BigInteger (micro → unit)
-var microToUnit = SiPrefixConverter.builder()
-        .forBigInteger()
-        .fixedConverter(SiPrefix.MICRO, SiPrefix.UNIT);
+        int milliMetresInt = toMilli.convert(SiPrefix.UNIT, 1234); // 1_234_000
 
-BigInteger exact = microToUnit.convert(java.math.BigInteger.valueOf(250_000)); // 250
+        // Fix both for BigInteger (micro → unit)
+        var microToUnit = SiPrefixConverter.builder()
+                .forBigInteger()
+                .fixedConverter(SiPrefix.MICRO, SiPrefix.UNIT);
+
+        BigInteger exact = microToUnit.convert(java.math.BigInteger.valueOf(250_000)); // 250
 ```
 
-## API overview
+## API Overview
 
 - **`SiPrefix`** — enum constants representing SI prefixed (e.g. `KILO`, `MILLI`).  
   The enum covers *quecto* to *quetta*. `UNIT` indicates "no prefix".
@@ -153,24 +153,75 @@ BigInteger exact = microToUnit.convert(java.math.BigInteger.valueOf(250_000)); /
 
 All methods are **thread‑safe** and expect **non‑null** arguments (package‑level `@NullMarked`).
 
-## Rounding semantics (long, int, and BigInteger conversions)
+## Rounding Semantics (long, int, and BigInteger Conversions)
 
 - When *downscaling* (÷ 10ᵏ), the result is **truncated towards zero** (no rounding).
 
 This behaviour is fast and predictable for counters, timestamps, and sizes.
 
-## Overflow semantics (long and int conversions)
+## Overflow Semantics (long and int Conversions)
 
 - When *upscaling* (× 10ᵏ), the value must not overflow `long` or `int`. If the factor exceeds **10¹⁸** for a long
   conversion, **10⁹** for an int conversion or the conversion calculation overflows, an `ArithmeticException` is thrown.
 
-## Performance notes
+## Performance Notes
+
+This library
 
 - Uses precomputed conversion factors and simple multiplies/divides.
 - Avoids heap allocations in normal operation when converting primitive values (i.e. `long`, `int`, `double`).
-- Minimal branching; friendly to JIT in hot code paths.
+- Performs minimal branching; friendly to JIT in hot code paths.
 
-## Build, test, docs
+All conversions run in the **nanosecond range**. For primitive types, performance is effectively free (~1 ns/op), while
+`BigInteger` shows the expected overhead of arbitrary-precision arithmetic.
+
+| Type           | Typical conversion (ns/op) |
+|----------------|----------------------------|
+| **int**        | 1.0-1.8                    |
+| **long**       | 1.0-1.8                    |
+| **double**     | 0.8–1.3                    |
+| **BigInteger** | 7.1–17.5                   |
+
+### Detailed Benchmarking Results
+
+Benchmarks were conducted using [JMH](https://openjdk.org/projects/code-tools/jmh/) (JDK 21.0.4, OpenJDK 64-Bit Server
+VM, 21.0.4+7-LTS, JMH 1.37, 2 warmup iterations, 4 measurement iterations, 1 fork.)
+
+All conversions run in the nanosecond range, with predictable differences across API styles and data types.
+
+| Type           | Conversion | Static (ns/op) | Builder: Both prefixes fixed | Builder: Source prefix fixed | Builder: Target prefix fixed |
+|----------------|------------|----------------|------------------------------|------------------------------|------------------------------|
+| **int**        | UNIT:UNIT  | 1.24 ± 0.01    | 0.90 ± 0.04                  | 1.62 ± 0.11                  | 1.53 ± 0.05                  |
+|                | GIGA:KILO  | 1.37 ± 0.01    | 1.01 ± 0.04                  | 1.74 ± 0.07                  | 1.75 ± 0.01                  |
+|                | KILO:GIGA  | 1.40 ± 0.04    | 1.03 ± 0.08                  | 1.72 ± 0.09                  | 1.76 ± 0.01                  |
+| **long**       | UNIT:UNIT  | 1.17 ± 0.01    | 0.90 ± 0.04                  | 1.50 ± 0.05                  | 1.50 ± 0.03                  |
+|                | GIGA:KILO  | 1.38 ± 0.03    | 1.04 ± 0.03                  | 1.76 ± 0.04                  | 1.77 ± 0.08                  |
+|                | KILO:GIGA  | 1.30 ± 0.01    | 1.01 ± 0.01                  | 1.69 ± 0.03                  | 1.74 ± 0.00                  |
+| **double**     | UNIT:UNIT  | 0.96 ± 0.01    | 0.78 ± 0.01                  | 1.23 ± 0.01                  | 1.23 ± 0.01                  |
+|                | GIGA:KILO  | 0.97 ± 0.02    | 0.84 ± 0.19                  | 1.26 ± 0.08                  | 1.24 ± 0.06                  |
+|                | KILO:GIGA  | 0.91 ± 0.05    | 0.85 ± 0.07                  | 1.23 ± 0.01                  | 1.23 ± 0.00                  |
+| **BigInteger** | UNIT:UNIT  | 1.49 ± 0.07    | 1.02 ± 0.07                  | 1.69 ± 0.03                  | 1.70 ± 0.02                  |
+|                | GIGA:KILO  | 8.10 ± 0.13    | 7.07 ± 0.21                  | 8.42 ± 0.13                  | 8.45 ± 0.08                  |
+|                | KILO:GIGA  | 16.71 ± 0.15   | 15.46 ± 0.14                 | 17.52 ± 3.49                 | 17.11 ± 0.20                 |
+
+(These numbers include only the conversion calls; builder creation cost is not measured).
+
+### Key Performance Findings
+
+- **Static vs. prefix fixing using builders**:
+    - *Fixing both prefixes* (converter with source & target locked in) is consistently the fastest variant.
+    - *Static methods* perform second-fastest.
+    - *Fixing only the source or the target prefix* performs slightly slower.
+- **Data types**:
+    - `int`, `long`, and `double` conversions all run around **1 ns/op**.
+    - `double` conversions are fastest.
+    - `BigInteger` conversions are an order of magnitude slower than primitive conversions.
+- **Scaling factors**:
+    - No significant penalty for down-scaling when using `int`, `long`, and `double`. Actually, up- and down-scaling
+      conversions show almost identical performance.
+    - For BigInteger, down-scaling takes roughly twice as long as up-scaling.
+
+## Build, Test, Docs, Benchmark
 
 ```bash
 # Build
@@ -181,11 +232,14 @@ mvn test
 
 # Generate Javadoc (also attaches javadoc JAR via plugin)
 mvn javadoc:jar
+
+# Benchmark
+mvn jmh:benchmark
 ```
 
 The project is configured with **Error Prone** and **NullAway** to facilitate null‑safety at compile time.
 
-## Versioning & compatibility
+## Versioning & Compatibility
 
 - The current POM targets **Java 21** (`<maven.compiler.release>21</maven.compiler.release>`).
 
