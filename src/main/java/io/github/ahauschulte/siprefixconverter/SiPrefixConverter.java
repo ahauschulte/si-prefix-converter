@@ -244,7 +244,7 @@ public final class SiPrefixConverter {
         }
     }
 
-    private static class ConversionFactorDoubleLookup {
+    private static final class ConversionFactorDoubleLookup {
         private static final double[] CONVERSION_FACTOR_LOOKUP_TABLE = {
                 1.e-60,
                 1.e-59, 1.e-58, 1.e-57, 1.e-56, 1.e-55, 1.e-54, 1.e-53, 1.e-52, 1.e-51, 1.e-50,
@@ -270,7 +270,7 @@ public final class SiPrefixConverter {
         }
     }
 
-    private static class ConversionFactorLongLookup {
+    private static final class ConversionFactorLongLookup {
         private static final long[] CONVERSION_FACTOR_LOOKUP_TABLE = {
                 10L,
                 100L,
@@ -314,7 +314,7 @@ public final class SiPrefixConverter {
         }
     }
 
-    private static class ConversionFactorBigIntegerLookup {
+    private static final class ConversionFactorBigIntegerLookup {
         private static final BigInteger[] CONVERSION_FACTOR_LOOKUP_TABLE = {
                 BigInteger.TEN,
                 BigInteger.TEN.pow(2),
