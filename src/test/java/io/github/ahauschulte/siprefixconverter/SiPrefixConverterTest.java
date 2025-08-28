@@ -19,7 +19,7 @@ class SiPrefixConverterTest {
         assertEquals(1_000., SiPrefixConverter.convert(SiPrefix.QUETTA, SiPrefix.RONNA, 1.));
         assertEquals(1_000_000_000_000_000., SiPrefixConverter.convert(SiPrefix.QUETTA, SiPrefix.PETA, 1.));
 
-        assertEquals(BigInteger.valueOf(100), SiPrefixConverter.convert(SiPrefix.DECA, SiPrefix.DECI, BigInteger.ONE));
+        assertEquals(BigInteger.valueOf(100L), SiPrefixConverter.convert(SiPrefix.DECA, SiPrefix.DECI, BigInteger.ONE));
         assertEquals(BigInteger.valueOf(1_000L), SiPrefixConverter.convert(SiPrefix.QUETTA, SiPrefix.RONNA, BigInteger.ONE));
         assertEquals(BigInteger.valueOf(1_000_000_000_000_000L), SiPrefixConverter.convert(SiPrefix.QUETTA, SiPrefix.PETA, BigInteger.ONE));
     }
@@ -67,13 +67,13 @@ class SiPrefixConverterTest {
                         .fixedSourcePrefixConverter(SiPrefix.DECA)
                         .convert(SiPrefix.DECI, 1.));
 
-        assertEquals(100,
+        assertEquals(100L,
                 SiPrefixConverter.builder()
                         .forLong()
                         .fixedSourcePrefixConverter(SiPrefix.DECA)
-                        .convert(SiPrefix.DECI, 1));
+                        .convert(SiPrefix.DECI, 1L));
 
-        assertEquals(BigInteger.valueOf(100),
+        assertEquals(BigInteger.valueOf(100L),
                 SiPrefixConverter.builder()
                         .forBigInteger()
                         .fixedSourcePrefixConverter(SiPrefix.DECA)
@@ -88,29 +88,29 @@ class SiPrefixConverterTest {
                         .fixedTargetPrefixConverter(SiPrefix.DECI)
                         .convert(SiPrefix.DECA, 1.));
 
-        assertEquals(100,
+        assertEquals(100L,
                 SiPrefixConverter.builder()
                         .forLong()
                         .fixedTargetPrefixConverter(SiPrefix.DECI)
-                        .convert(SiPrefix.DECA, 1));
+                        .convert(SiPrefix.DECA, 1L));
 
-        assertEquals(10,
+        assertEquals(10L,
                 SiPrefixConverter.builder()
                         .forLong()
                         .fixedTargetPrefixConverter(SiPrefix.DECA)
-                        .convert(SiPrefix.DECI, 1_000));
+                        .convert(SiPrefix.DECI, 1_000L));
 
-        assertEquals(BigInteger.valueOf(100),
+        assertEquals(BigInteger.valueOf(100L),
                 SiPrefixConverter.builder()
                         .forBigInteger()
                         .fixedTargetPrefixConverter(SiPrefix.DECI)
                         .convert(SiPrefix.DECA, BigInteger.ONE));
 
-        assertEquals(BigInteger.valueOf(10),
+        assertEquals(BigInteger.valueOf(10L),
                 SiPrefixConverter.builder()
                         .forBigInteger()
                         .fixedTargetPrefixConverter(SiPrefix.DECA)
-                        .convert(SiPrefix.DECI, BigInteger.valueOf(1_000)));
+                        .convert(SiPrefix.DECI, BigInteger.valueOf(1_000L)));
     }
 
     @Test
@@ -121,29 +121,29 @@ class SiPrefixConverterTest {
                         .fixedConverter(SiPrefix.DECA, SiPrefix.DECI)
                         .convert(1.));
 
-        assertEquals(100,
+        assertEquals(100L,
                 SiPrefixConverter.builder()
                         .forLong()
                         .fixedConverter(SiPrefix.DECA, SiPrefix.DECI)
-                        .convert(1));
+                        .convert(1L));
 
-        assertEquals(10,
+        assertEquals(10L,
                 SiPrefixConverter.builder()
                         .forLong()
                         .fixedConverter(SiPrefix.DECI, SiPrefix.DECA)
-                        .convert(1_000));
+                        .convert(1_000L));
 
-        assertEquals(BigInteger.valueOf(100),
+        assertEquals(BigInteger.valueOf(100L),
                 SiPrefixConverter.builder()
                         .forBigInteger()
                         .fixedConverter(SiPrefix.DECA, SiPrefix.DECI)
                         .convert(BigInteger.ONE));
 
-        assertEquals(BigInteger.valueOf(10),
+        assertEquals(BigInteger.valueOf(10L),
                 SiPrefixConverter.builder()
                         .forBigInteger()
                         .fixedConverter(SiPrefix.DECI, SiPrefix.DECA)
-                        .convert(BigInteger.valueOf(1_000)));
+                        .convert(BigInteger.valueOf(1_000L)));
     }
 
     @Test
@@ -163,7 +163,7 @@ class SiPrefixConverterTest {
         assertThrows(NullPointerException.class,
                 () -> SiPrefixConverter.convert(SiPrefix.UNIT, null, BigInteger.ONE));
         assertThrows(NullPointerException.class,
-                () -> SiPrefixConverter.convert(SiPrefix.UNIT, SiPrefix.KILO, (BigInteger) null));
+                () -> SiPrefixConverter.convert(SiPrefix.UNIT, SiPrefix.KILO, null));
 
         assertThrows((NullPointerException.class),
                 () -> SiPrefixConverter.builder().forLong().fixedSourcePrefixConverter(null));

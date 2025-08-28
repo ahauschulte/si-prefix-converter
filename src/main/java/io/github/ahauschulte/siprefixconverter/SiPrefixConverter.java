@@ -2,8 +2,7 @@ package io.github.ahauschulte.siprefixconverter;
 
 import java.math.BigInteger;
 import java.util.Objects;
-import java.util.function.BinaryOperator;
-import java.util.function.LongBinaryOperator;
+import java.util.function.*;
 
 /**
  * Utility for converting numeric values between different SI prefixes.
@@ -263,15 +262,16 @@ public final class SiPrefixConverter {
                 1.e51, 1.e52, 1.e53, 1.e54, 1.e55, 1.e56, 1.e57, 1.e58, 1.e59, 1.e60
         };
 
-        static double getConversionFactor(final int index) {
-            final int lookupIndex = index + CONVERSION_FACTOR_LOOKUP_TABLE.length / 2;
-            return CONVERSION_FACTOR_LOOKUP_TABLE[lookupIndex];
+        private static final int CONVERSION_FACTOR_LOOKUP_INDEX_OFFSET = CONVERSION_FACTOR_LOOKUP_TABLE.length / 2;
+
+        private static double getConversionFactor(final int index) {
+            final int conversionFactorLookupIndex = index + CONVERSION_FACTOR_LOOKUP_INDEX_OFFSET;
+            return CONVERSION_FACTOR_LOOKUP_TABLE[conversionFactorLookupIndex];
         }
     }
 
     private static class ConversionFactorLongLookup {
         private static final long[] CONVERSION_FACTOR_LOOKUP_TABLE = {
-                1L,
                 10L,
                 100L,
                 1_000L,
@@ -293,29 +293,29 @@ public final class SiPrefixConverter {
         };
 
         private static final LongBinaryOperator[] FACTOR_APPLICATION_STRATEGIES = {
-                Math::divideExact,
+                (a, b) -> a / b,
+                (a, b) -> a,
                 Math::multiplyExact
         };
 
-        static long getConversionFactor(final int index) {
-            final int lookupIndex = Math.abs(index);
+        private static long getConversionFactor(final int index) {
+            final int conversionFactorLookupIndex = Math.abs(index - Integer.signum(index));
 
-            if (lookupIndex >= CONVERSION_FACTOR_LOOKUP_TABLE.length) {
+            if (conversionFactorLookupIndex >= CONVERSION_FACTOR_LOOKUP_TABLE.length) {
                 throw new ArithmeticException("Required conversion factor exceeds supported range for long (max 10^18). Index was " + index);
             }
 
-            return CONVERSION_FACTOR_LOOKUP_TABLE[lookupIndex];
+            return CONVERSION_FACTOR_LOOKUP_TABLE[conversionFactorLookupIndex];
         }
 
-        static LongBinaryOperator getFactorApplicationStrategy(final int index) {
-            final int strategyIndex = (Integer.signum(index) + 1) / 2;
+        private static LongBinaryOperator getFactorApplicationStrategy(final int index) {
+            final int strategyIndex = Integer.signum(index) + 1;
             return FACTOR_APPLICATION_STRATEGIES[strategyIndex];
         }
     }
 
     private static class ConversionFactorBigIntegerLookup {
         private static final BigInteger[] CONVERSION_FACTOR_LOOKUP_TABLE = {
-                BigInteger.ONE,
                 BigInteger.TEN,
                 BigInteger.TEN.pow(2),
                 BigInteger.TEN.pow(3),
@@ -381,18 +381,19 @@ public final class SiPrefixConverter {
         private interface BigIntegerBinaryOperator extends BinaryOperator<BigInteger> {
         }
 
-        private static final BigIntegerBinaryOperator[] FACTOR_APPLICATION_STRATEGIES = new BigIntegerBinaryOperator[]{
+        private static final BigIntegerBinaryOperator[] FACTOR_APPLICATION_STRATEGIES = new BigIntegerBinaryOperator[] {
                 BigInteger::divide,
+                (a, b) -> a,
                 BigInteger::multiply
         };
 
-        static BigInteger getConversionFactor(final int index) {
-            final int lookupIndex = Math.abs(index);
-            return CONVERSION_FACTOR_LOOKUP_TABLE[lookupIndex];
+        private static BigInteger getConversionFactor(final int index) {
+            final int conversionFactorLookupIndex = Math.abs(index - Integer.signum(index));
+            return CONVERSION_FACTOR_LOOKUP_TABLE[conversionFactorLookupIndex];
         }
 
-        static BinaryOperator<BigInteger> getFactorApplicationStrategy(final int index) {
-            final int strategyIndex = (Integer.signum(index) + 1) / 2;
+        private static BinaryOperator<BigInteger> getFactorApplicationStrategy(final int index) {
+            final int strategyIndex = Integer.signum(index) + 1;
             return FACTOR_APPLICATION_STRATEGIES[strategyIndex];
         }
     }
