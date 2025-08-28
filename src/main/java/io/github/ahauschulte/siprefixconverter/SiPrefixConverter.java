@@ -63,7 +63,7 @@ public final class SiPrefixConverter {
      * @return the converted value (possibly truncated)
      * @throws NullPointerException if any prefix is {@code null}
      * @throws ArithmeticException  if the required conversion factor is beyond 10^18 (for both up and down scaling) or
-     * the conversion calculation overflows
+     *                              the conversion calculation overflows
      */
     public static long convert(final SiPrefix sourceSiPrefix, final SiPrefix targetSiPrefix, final long sourceValue) {
         Objects.requireNonNull(sourceSiPrefix, SOURCE_SI_PREFIX_NULL_CHECK_MSG);
@@ -110,15 +110,15 @@ public final class SiPrefixConverter {
 
     private static double doConvertDouble(final SiPrefix sourceSiPrefix, final SiPrefix targetSiPrefix, final double sourceValue) {
         final int conversionExponent = calculateConversionExponent(sourceSiPrefix, targetSiPrefix);
-        final double conversionFactor = ConversionFactorDoubleLookup.getConversionFactor(conversionExponent);
-        
+        final double conversionFactor = ConversionLookupDouble.getConversionFactor(conversionExponent);
+
         return conversionFactor * sourceValue;
     }
 
     private static long doConvertLong(final SiPrefix sourceSiPrefix, final SiPrefix targetSiPrefix, final long sourceValue) {
         final int conversionExponent = calculateConversionExponent(sourceSiPrefix, targetSiPrefix);
-        final long conversionFactor = ConversionFactorLongLookup.getConversionFactor(conversionExponent);
-        final LongBinaryOperator factorApplicationStrategy = ConversionFactorLongLookup.getFactorApplicationStrategy(conversionExponent);
+        final long conversionFactor = ConversionLookupLong.getConversionFactor(conversionExponent);
+        final LongBinaryOperator factorApplicationStrategy = ConversionLookupLong.getFactorApplicationStrategy(conversionExponent);
 
         return factorApplicationStrategy.applyAsLong(sourceValue, conversionFactor);
     }
@@ -127,8 +127,8 @@ public final class SiPrefixConverter {
         Objects.requireNonNull(sourceValue, "sourceValue must not be null");
 
         final int conversionExponent = calculateConversionExponent(sourceSiPrefix, targetSiPrefix);
-        final BigInteger conversionFactor = ConversionFactorBigIntegerLookup.getConversionFactor(conversionExponent);
-        final BinaryOperator<BigInteger> factorApplicationStrategy = ConversionFactorBigIntegerLookup.getFactorApplicationStrategy(conversionExponent);
+        final BigInteger conversionFactor = ConversionLookupBigInteger.getConversionFactor(conversionExponent);
+        final BinaryOperator<BigInteger> factorApplicationStrategy = ConversionLookupBigInteger.getFactorApplicationStrategy(conversionExponent);
 
         return factorApplicationStrategy.apply(sourceValue, conversionFactor);
     }
@@ -156,7 +156,7 @@ public final class SiPrefixConverter {
             Objects.requireNonNull(targetSiPrefix, TARGET_SI_PREFIX_NULL_CHECK_MSG);
 
             final int conversionExponent = calculateConversionExponent(sourceSiPrefix, targetSiPrefix);
-            final double conversionFactor = ConversionFactorDoubleLookup.getConversionFactor(conversionExponent);
+            final double conversionFactor = ConversionLookupDouble.getConversionFactor(conversionExponent);
 
             return (double sourceValue) -> conversionFactor * sourceValue;
         }
@@ -185,8 +185,8 @@ public final class SiPrefixConverter {
             Objects.requireNonNull(targetSiPrefix, TARGET_SI_PREFIX_NULL_CHECK_MSG);
 
             final int conversionExponent = calculateConversionExponent(sourceSiPrefix, targetSiPrefix);
-            final long conversionFactor = ConversionFactorLongLookup.getConversionFactor(conversionExponent);
-            final LongBinaryOperator factorApplicationStrategy = ConversionFactorLongLookup.getFactorApplicationStrategy(conversionExponent);
+            final long conversionFactor = ConversionLookupLong.getConversionFactor(conversionExponent);
+            final LongBinaryOperator factorApplicationStrategy = ConversionLookupLong.getFactorApplicationStrategy(conversionExponent);
 
             return (long sourceValue) -> factorApplicationStrategy.applyAsLong(sourceValue, conversionFactor);
         }
@@ -215,8 +215,8 @@ public final class SiPrefixConverter {
             Objects.requireNonNull(targetSiPrefix, TARGET_SI_PREFIX_NULL_CHECK_MSG);
 
             final int conversionExponent = calculateConversionExponent(sourceSiPrefix, targetSiPrefix);
-            final BigInteger conversionFactor = ConversionFactorBigIntegerLookup.getConversionFactor(conversionExponent);
-            final BinaryOperator<BigInteger> factorApplicationStrategy = ConversionFactorBigIntegerLookup.getFactorApplicationStrategy(conversionExponent);
+            final BigInteger conversionFactor = ConversionLookupBigInteger.getConversionFactor(conversionExponent);
+            final BinaryOperator<BigInteger> factorApplicationStrategy = ConversionLookupBigInteger.getFactorApplicationStrategy(conversionExponent);
 
             return (BigInteger sourceValue) -> {
                 Objects.requireNonNull(sourceValue, "sourceValue must not be null");
@@ -243,158 +243,158 @@ public final class SiPrefixConverter {
             return SiPrefixBigIntegerConverterBuilder.INSTANCE;
         }
     }
+}
 
-    private static final class ConversionFactorDoubleLookup {
-        private static final double[] CONVERSION_FACTOR_LOOKUP_TABLE = {
-                1.e-60,
-                1.e-59, 1.e-58, 1.e-57, 1.e-56, 1.e-55, 1.e-54, 1.e-53, 1.e-52, 1.e-51, 1.e-50,
-                1.e-49, 1.e-48, 1.e-47, 1.e-46, 1.e-45, 1.e-44, 1.e-43, 1.e-42, 1.e-41, 1.e-40,
-                1.e-39, 1.e-38, 1.e-37, 1.e-36, 1.e-35, 1.e-34, 1.e-33, 1.e-32, 1.e-31, 1.e-30,
-                1.e-29, 1.e-28, 1.e-27, 1.e-26, 1.e-25, 1.e-24, 1.e-23, 1.e-22, 1.e-21, 1.e-20,
-                1.e-19, 1.e-18, 1.e-17, 1.e-16, 1.e-15, 1.e-14, 1.e-13, 1.e-12, 1.e-11, 1.e-10,
-                1.e-9, 1.e-8, 1.e-7, 1.e-6, 1.e-5, 1.e-4, 1.e-3, 1.e-2, 1.e-1,
-                1.e0,
-                1.e1, 1.e2, 1.e3, 1.e4, 1.e5, 1.e6, 1.e7, 1.e8, 1.e9, 1.e10,
-                1.e11, 1.e12, 1.e13, 1.e14, 1.e15, 1.e16, 1.e17, 1.e18, 1.e19, 1.e20,
-                1.e21, 1.e22, 1.e23, 1.e24, 1.e25, 1.e26, 1.e27, 1.e28, 1.e29, 1.e30,
-                1.e31, 1.e32, 1.e33, 1.e34, 1.e35, 1.e36, 1.e37, 1.e38, 1.e39, 1.e40,
-                1.e41, 1.e42, 1.e43, 1.e44, 1.e45, 1.e46, 1.e47, 1.e48, 1.e49, 1.e50,
-                1.e51, 1.e52, 1.e53, 1.e54, 1.e55, 1.e56, 1.e57, 1.e58, 1.e59, 1.e60
-        };
+final class ConversionLookupDouble {
+    private static final double[] CONVERSION_FACTOR_LOOKUP_TABLE = {
+            1.e-60,
+            1.e-59, 1.e-58, 1.e-57, 1.e-56, 1.e-55, 1.e-54, 1.e-53, 1.e-52, 1.e-51, 1.e-50,
+            1.e-49, 1.e-48, 1.e-47, 1.e-46, 1.e-45, 1.e-44, 1.e-43, 1.e-42, 1.e-41, 1.e-40,
+            1.e-39, 1.e-38, 1.e-37, 1.e-36, 1.e-35, 1.e-34, 1.e-33, 1.e-32, 1.e-31, 1.e-30,
+            1.e-29, 1.e-28, 1.e-27, 1.e-26, 1.e-25, 1.e-24, 1.e-23, 1.e-22, 1.e-21, 1.e-20,
+            1.e-19, 1.e-18, 1.e-17, 1.e-16, 1.e-15, 1.e-14, 1.e-13, 1.e-12, 1.e-11, 1.e-10,
+            1.e-9, 1.e-8, 1.e-7, 1.e-6, 1.e-5, 1.e-4, 1.e-3, 1.e-2, 1.e-1,
+            1.e0,
+            1.e1, 1.e2, 1.e3, 1.e4, 1.e5, 1.e6, 1.e7, 1.e8, 1.e9, 1.e10,
+            1.e11, 1.e12, 1.e13, 1.e14, 1.e15, 1.e16, 1.e17, 1.e18, 1.e19, 1.e20,
+            1.e21, 1.e22, 1.e23, 1.e24, 1.e25, 1.e26, 1.e27, 1.e28, 1.e29, 1.e30,
+            1.e31, 1.e32, 1.e33, 1.e34, 1.e35, 1.e36, 1.e37, 1.e38, 1.e39, 1.e40,
+            1.e41, 1.e42, 1.e43, 1.e44, 1.e45, 1.e46, 1.e47, 1.e48, 1.e49, 1.e50,
+            1.e51, 1.e52, 1.e53, 1.e54, 1.e55, 1.e56, 1.e57, 1.e58, 1.e59, 1.e60
+    };
 
-        private static final int CONVERSION_FACTOR_LOOKUP_INDEX_OFFSET = CONVERSION_FACTOR_LOOKUP_TABLE.length / 2;
+    private static final int CONVERSION_FACTOR_LOOKUP_INDEX_OFFSET = CONVERSION_FACTOR_LOOKUP_TABLE.length / 2;
 
-        private static double getConversionFactor(final int index) {
-            final int conversionFactorLookupIndex = index + CONVERSION_FACTOR_LOOKUP_INDEX_OFFSET;
-            return CONVERSION_FACTOR_LOOKUP_TABLE[conversionFactorLookupIndex];
+    static double getConversionFactor(final int index) {
+        final int conversionFactorLookupIndex = index + CONVERSION_FACTOR_LOOKUP_INDEX_OFFSET;
+        return CONVERSION_FACTOR_LOOKUP_TABLE[conversionFactorLookupIndex];
+    }
+}
+
+final class ConversionLookupLong {
+    private static final long[] CONVERSION_FACTOR_LOOKUP_TABLE = {
+            10L,
+            100L,
+            1_000L,
+            10_000L,
+            100_000L,
+            1_000_000L,
+            10_000_000L,
+            100_000_000L,
+            1_000_000_000L,
+            10_000_000_000L,
+            100_000_000_000L,
+            1_000_000_000_000L,
+            10_000_000_000_000L,
+            100_000_000_000_000L,
+            1_000_000_000_000_000L,
+            10_000_000_000_000_000L,
+            100_000_000_000_000_000L,
+            1_000_000_000_000_000_000L,
+    };
+
+    private static final LongBinaryOperator[] FACTOR_APPLICATION_STRATEGIES = {
+            (a, b) -> a / b,
+            (a, b) -> a,
+            Math::multiplyExact
+    };
+
+    static long getConversionFactor(final int index) {
+        final int conversionFactorLookupIndex = Math.abs(index - Integer.signum(index));
+
+        if (conversionFactorLookupIndex >= CONVERSION_FACTOR_LOOKUP_TABLE.length) {
+            throw new ArithmeticException("Required conversion factor exceeds supported range for long (max 10^18). Index was " + index);
         }
+
+        return CONVERSION_FACTOR_LOOKUP_TABLE[conversionFactorLookupIndex];
     }
 
-    private static final class ConversionFactorLongLookup {
-        private static final long[] CONVERSION_FACTOR_LOOKUP_TABLE = {
-                10L,
-                100L,
-                1_000L,
-                10_000L,
-                100_000L,
-                1_000_000L,
-                10_000_000L,
-                100_000_000L,
-                1_000_000_000L,
-                10_000_000_000L,
-                100_000_000_000L,
-                1_000_000_000_000L,
-                10_000_000_000_000L,
-                100_000_000_000_000L,
-                1_000_000_000_000_000L,
-                10_000_000_000_000_000L,
-                100_000_000_000_000_000L,
-                1_000_000_000_000_000_000L,
-        };
+    static LongBinaryOperator getFactorApplicationStrategy(final int index) {
+        final int strategyIndex = Integer.signum(index) + 1;
+        return FACTOR_APPLICATION_STRATEGIES[strategyIndex];
+    }
+}
 
-        private static final LongBinaryOperator[] FACTOR_APPLICATION_STRATEGIES = {
-                (a, b) -> a / b,
-                (a, b) -> a,
-                Math::multiplyExact
-        };
+final class ConversionLookupBigInteger {
+    private static final BigInteger[] CONVERSION_FACTOR_LOOKUP_TABLE = {
+            BigInteger.TEN,
+            BigInteger.TEN.pow(2),
+            BigInteger.TEN.pow(3),
+            BigInteger.TEN.pow(4),
+            BigInteger.TEN.pow(5),
+            BigInteger.TEN.pow(6),
+            BigInteger.TEN.pow(7),
+            BigInteger.TEN.pow(8),
+            BigInteger.TEN.pow(9),
+            BigInteger.TEN.pow(10),
+            BigInteger.TEN.pow(11),
+            BigInteger.TEN.pow(12),
+            BigInteger.TEN.pow(13),
+            BigInteger.TEN.pow(14),
+            BigInteger.TEN.pow(15),
+            BigInteger.TEN.pow(16),
+            BigInteger.TEN.pow(17),
+            BigInteger.TEN.pow(18),
+            BigInteger.TEN.pow(19),
+            BigInteger.TEN.pow(20),
+            BigInteger.TEN.pow(21),
+            BigInteger.TEN.pow(22),
+            BigInteger.TEN.pow(23),
+            BigInteger.TEN.pow(24),
+            BigInteger.TEN.pow(25),
+            BigInteger.TEN.pow(26),
+            BigInteger.TEN.pow(27),
+            BigInteger.TEN.pow(28),
+            BigInteger.TEN.pow(29),
+            BigInteger.TEN.pow(30),
+            BigInteger.TEN.pow(31),
+            BigInteger.TEN.pow(32),
+            BigInteger.TEN.pow(33),
+            BigInteger.TEN.pow(34),
+            BigInteger.TEN.pow(35),
+            BigInteger.TEN.pow(36),
+            BigInteger.TEN.pow(37),
+            BigInteger.TEN.pow(38),
+            BigInteger.TEN.pow(39),
+            BigInteger.TEN.pow(40),
+            BigInteger.TEN.pow(41),
+            BigInteger.TEN.pow(42),
+            BigInteger.TEN.pow(43),
+            BigInteger.TEN.pow(44),
+            BigInteger.TEN.pow(45),
+            BigInteger.TEN.pow(46),
+            BigInteger.TEN.pow(47),
+            BigInteger.TEN.pow(48),
+            BigInteger.TEN.pow(49),
+            BigInteger.TEN.pow(50),
+            BigInteger.TEN.pow(51),
+            BigInteger.TEN.pow(52),
+            BigInteger.TEN.pow(53),
+            BigInteger.TEN.pow(54),
+            BigInteger.TEN.pow(55),
+            BigInteger.TEN.pow(56),
+            BigInteger.TEN.pow(57),
+            BigInteger.TEN.pow(58),
+            BigInteger.TEN.pow(59),
+            BigInteger.TEN.pow(60)
+    };
 
-        private static long getConversionFactor(final int index) {
-            final int conversionFactorLookupIndex = Math.abs(index - Integer.signum(index));
-
-            if (conversionFactorLookupIndex >= CONVERSION_FACTOR_LOOKUP_TABLE.length) {
-                throw new ArithmeticException("Required conversion factor exceeds supported range for long (max 10^18). Index was " + index);
-            }
-
-            return CONVERSION_FACTOR_LOOKUP_TABLE[conversionFactorLookupIndex];
-        }
-
-        private static LongBinaryOperator getFactorApplicationStrategy(final int index) {
-            final int strategyIndex = Integer.signum(index) + 1;
-            return FACTOR_APPLICATION_STRATEGIES[strategyIndex];
-        }
+    private interface BigIntegerBinaryOperator extends BinaryOperator<BigInteger> {
     }
 
-    private static final class ConversionFactorBigIntegerLookup {
-        private static final BigInteger[] CONVERSION_FACTOR_LOOKUP_TABLE = {
-                BigInteger.TEN,
-                BigInteger.TEN.pow(2),
-                BigInteger.TEN.pow(3),
-                BigInteger.TEN.pow(4),
-                BigInteger.TEN.pow(5),
-                BigInteger.TEN.pow(6),
-                BigInteger.TEN.pow(7),
-                BigInteger.TEN.pow(8),
-                BigInteger.TEN.pow(9),
-                BigInteger.TEN.pow(10),
-                BigInteger.TEN.pow(11),
-                BigInteger.TEN.pow(12),
-                BigInteger.TEN.pow(13),
-                BigInteger.TEN.pow(14),
-                BigInteger.TEN.pow(15),
-                BigInteger.TEN.pow(16),
-                BigInteger.TEN.pow(17),
-                BigInteger.TEN.pow(18),
-                BigInteger.TEN.pow(19),
-                BigInteger.TEN.pow(20),
-                BigInteger.TEN.pow(21),
-                BigInteger.TEN.pow(22),
-                BigInteger.TEN.pow(23),
-                BigInteger.TEN.pow(24),
-                BigInteger.TEN.pow(25),
-                BigInteger.TEN.pow(26),
-                BigInteger.TEN.pow(27),
-                BigInteger.TEN.pow(28),
-                BigInteger.TEN.pow(29),
-                BigInteger.TEN.pow(30),
-                BigInteger.TEN.pow(31),
-                BigInteger.TEN.pow(32),
-                BigInteger.TEN.pow(33),
-                BigInteger.TEN.pow(34),
-                BigInteger.TEN.pow(35),
-                BigInteger.TEN.pow(36),
-                BigInteger.TEN.pow(37),
-                BigInteger.TEN.pow(38),
-                BigInteger.TEN.pow(39),
-                BigInteger.TEN.pow(40),
-                BigInteger.TEN.pow(41),
-                BigInteger.TEN.pow(42),
-                BigInteger.TEN.pow(43),
-                BigInteger.TEN.pow(44),
-                BigInteger.TEN.pow(45),
-                BigInteger.TEN.pow(46),
-                BigInteger.TEN.pow(47),
-                BigInteger.TEN.pow(48),
-                BigInteger.TEN.pow(49),
-                BigInteger.TEN.pow(50),
-                BigInteger.TEN.pow(51),
-                BigInteger.TEN.pow(52),
-                BigInteger.TEN.pow(53),
-                BigInteger.TEN.pow(54),
-                BigInteger.TEN.pow(55),
-                BigInteger.TEN.pow(56),
-                BigInteger.TEN.pow(57),
-                BigInteger.TEN.pow(58),
-                BigInteger.TEN.pow(59),
-                BigInteger.TEN.pow(60)
-        };
+    private static final BigIntegerBinaryOperator[] FACTOR_APPLICATION_STRATEGIES = new BigIntegerBinaryOperator[]{
+            BigInteger::divide,
+            (a, b) -> a,
+            BigInteger::multiply
+    };
 
-        private interface BigIntegerBinaryOperator extends BinaryOperator<BigInteger> {
-        }
+    static BigInteger getConversionFactor(final int index) {
+        final int conversionFactorLookupIndex = Math.abs(index - Integer.signum(index));
+        return CONVERSION_FACTOR_LOOKUP_TABLE[conversionFactorLookupIndex];
+    }
 
-        private static final BigIntegerBinaryOperator[] FACTOR_APPLICATION_STRATEGIES = new BigIntegerBinaryOperator[] {
-                BigInteger::divide,
-                (a, b) -> a,
-                BigInteger::multiply
-        };
-
-        private static BigInteger getConversionFactor(final int index) {
-            final int conversionFactorLookupIndex = Math.abs(index - Integer.signum(index));
-            return CONVERSION_FACTOR_LOOKUP_TABLE[conversionFactorLookupIndex];
-        }
-
-        private static BinaryOperator<BigInteger> getFactorApplicationStrategy(final int index) {
-            final int strategyIndex = Integer.signum(index) + 1;
-            return FACTOR_APPLICATION_STRATEGIES[strategyIndex];
-        }
+    static BinaryOperator<BigInteger> getFactorApplicationStrategy(final int index) {
+        final int strategyIndex = Integer.signum(index) + 1;
+        return FACTOR_APPLICATION_STRATEGIES[strategyIndex];
     }
 }
