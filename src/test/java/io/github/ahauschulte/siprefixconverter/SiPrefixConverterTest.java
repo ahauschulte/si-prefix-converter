@@ -62,8 +62,8 @@ class SiPrefixConverterTest {
 
     @Test
     void testUnchangedConversion() {
-        assertEquals(123456789L, SiPrefixConverter.convert(SiPrefix.KILO, SiPrefix.KILO, 123456789L));
-        assertEquals(123456789, SiPrefixConverter.convert(SiPrefix.KILO, SiPrefix.KILO, 123456789));
+        assertEquals(123_456_789L, SiPrefixConverter.convert(SiPrefix.KILO, SiPrefix.KILO, 123_456_789L));
+        assertEquals(123_456_789, SiPrefixConverter.convert(SiPrefix.KILO, SiPrefix.KILO, 123_456_789));
         assertEquals(-42., SiPrefixConverter.convert(SiPrefix.UNIT, SiPrefix.UNIT, -42.));
         assertEquals(BigInteger.TEN, SiPrefixConverter.convert(SiPrefix.MILLI, SiPrefix.MILLI, BigInteger.TEN));
     }

@@ -55,14 +55,14 @@ public final class SiPrefixConverter {
      *
      * <p>Uses integer arithmetic. When scaling down (division), the result is truncated towards zero.
      * Throws {@link ArithmeticException} if the required conversion factor exceeds 10<sup>18</sup>
-     * (for both up and down scaling) or the conversion calculation overflows.
+     * for up-scaling or the conversion calculation overflows.
      *
      * @param sourceSiPrefix the prefix the {@code sourceValue} is currently expressed in
      * @param targetSiPrefix the prefix to convert to
      * @param sourceValue    the value to convert
      * @return the converted value (possibly truncated)
      * @throws NullPointerException if any prefix is {@code null}
-     * @throws ArithmeticException  if the required conversion factor is beyond 10^18 (for both up and down scaling) or
+     * @throws ArithmeticException  if the required conversion factor is beyond 10^18 for up-scaling or
      *                              the conversion calculation overflows
      */
     public static long convert(final SiPrefix sourceSiPrefix, final SiPrefix targetSiPrefix, final long sourceValue) {
@@ -77,14 +77,14 @@ public final class SiPrefixConverter {
      *
      * <p>Uses integer arithmetic. When scaling down (division), the result is truncated towards zero.
      * Throws {@link ArithmeticException} if the required conversion factor exceeds 10<sup>9</sup>
-     * (for both up and down scaling) or the conversion calculation overflows.
+     * for up-scaling or the conversion calculation overflows.
      *
      * @param sourceSiPrefix the prefix the {@code sourceValue} is currently expressed in
      * @param targetSiPrefix the prefix to convert to
      * @param sourceValue    the value to convert
      * @return the converted value (possibly truncated)
      * @throws NullPointerException if any prefix is {@code null}
-     * @throws ArithmeticException  if the required conversion factor is beyond 10^9 (for both up and down scaling) or
+     * @throws ArithmeticException  if the required conversion factor is beyond 10^9 for up-scaling or
      *                              the conversion calculation overflows
      */
     public static int convert(final SiPrefix sourceSiPrefix, final SiPrefix targetSiPrefix, final int sourceValue) {
@@ -139,16 +139,18 @@ public final class SiPrefixConverter {
 
     private static long doConvertLong(final SiPrefix sourceSiPrefix, final SiPrefix targetSiPrefix, final long sourceValue) {
         final int conversionExponent = calculateConversionExponent(sourceSiPrefix, targetSiPrefix);
-        final long conversionFactor = ConversionLookupLong.getConversionFactor(conversionExponent);
-        final LongBinaryOperator factorApplicationStrategy = ConversionLookupLong.getFactorApplicationStrategy(conversionExponent);
+        final ConversionLookupLong.ConversionData conversionData = ConversionLookupLong.getConversionData(conversionExponent);
+        final long conversionFactor = conversionData.conversionFactor();
+        final LongBinaryOperator factorApplicationStrategy = conversionData.factorApplicationStrategy();
 
         return factorApplicationStrategy.applyAsLong(sourceValue, conversionFactor);
     }
 
     private static int doConvertInt(final SiPrefix sourceSiPrefix, final SiPrefix targetSiPrefix, final int sourceValue) {
         final int conversionExponent = calculateConversionExponent(sourceSiPrefix, targetSiPrefix);
-        final int conversionFactor = ConversionLookupInt.getConversionFactor(conversionExponent);
-        final IntBinaryOperator factorApplicationStrategy = ConversionLookupInt.getFactorApplicationStrategy(conversionExponent);
+        final ConversionLookupInt.ConversionData conversionData = ConversionLookupInt.getConversionData(conversionExponent);
+        final int conversionFactor = conversionData.conversionFactor();
+        final IntBinaryOperator factorApplicationStrategy = conversionData.factorApplicationStrategy();
 
         return factorApplicationStrategy.applyAsInt(sourceValue, conversionFactor);
     }
@@ -221,8 +223,9 @@ public final class SiPrefixConverter {
             Objects.requireNonNull(targetSiPrefix, TARGET_SI_PREFIX_NULL_CHECK_MSG);
 
             final int conversionExponent = calculateConversionExponent(sourceSiPrefix, targetSiPrefix);
-            final long conversionFactor = ConversionLookupLong.getConversionFactor(conversionExponent);
-            final LongBinaryOperator factorApplicationStrategy = ConversionLookupLong.getFactorApplicationStrategy(conversionExponent);
+            final ConversionLookupLong.ConversionData conversionData = ConversionLookupLong.getConversionData(conversionExponent);
+            final long conversionFactor = conversionData.conversionFactor();
+            final LongBinaryOperator factorApplicationStrategy = conversionData.factorApplicationStrategy();
 
             return (long sourceValue) -> factorApplicationStrategy.applyAsLong(sourceValue, conversionFactor);
         }
@@ -254,8 +257,9 @@ public final class SiPrefixConverter {
             Objects.requireNonNull(targetSiPrefix, TARGET_SI_PREFIX_NULL_CHECK_MSG);
 
             final int conversionExponent = calculateConversionExponent(sourceSiPrefix, targetSiPrefix);
-            final int conversionFactor = ConversionLookupInt.getConversionFactor(conversionExponent);
-            final IntBinaryOperator factorApplicationStrategy = ConversionLookupInt.getFactorApplicationStrategy(conversionExponent);
+            final ConversionLookupInt.ConversionData conversionData = ConversionLookupInt.getConversionData(conversionExponent);
+            final int conversionFactor = conversionData.conversionFactor();
+            final IntBinaryOperator factorApplicationStrategy = conversionData.factorApplicationStrategy();
 
             return (int sourceValue) -> factorApplicationStrategy.applyAsInt(sourceValue, conversionFactor);
         }
@@ -342,88 +346,91 @@ final class ConversionLookupDouble {
 
     private static final int CONVERSION_FACTOR_LOOKUP_INDEX_OFFSET = CONVERSION_FACTOR_LOOKUP_TABLE.length / 2;
 
-    static double getConversionFactor(final int index) {
-        final int conversionFactorLookupIndex = index + CONVERSION_FACTOR_LOOKUP_INDEX_OFFSET;
+    static double getConversionFactor(final int conversionExponent) {
+        final int conversionFactorLookupIndex = conversionExponent + CONVERSION_FACTOR_LOOKUP_INDEX_OFFSET;
         return CONVERSION_FACTOR_LOOKUP_TABLE[conversionFactorLookupIndex];
     }
 }
 
 final class ConversionLookupLong {
-    private static final long[] CONVERSION_FACTOR_LOOKUP_TABLE = {
-            10L,
-            100L,
-            1_000L,
-            10_000L,
-            100_000L,
-            1_000_000L,
-            10_000_000L,
-            100_000_000L,
-            1_000_000_000L,
-            10_000_000_000L,
-            100_000_000_000L,
-            1_000_000_000_000L,
-            10_000_000_000_000L,
-            100_000_000_000_000L,
-            1_000_000_000_000_000L,
-            10_000_000_000_000_000L,
-            100_000_000_000_000_000L,
-            1_000_000_000_000_000_000L,
-    };
 
-    private static final LongBinaryOperator[] FACTOR_APPLICATION_STRATEGIES = {
-            (a, b) -> a / b,
-            (a, b) -> a,
-            Math::multiplyExact
-    };
+    record ConversionData (long conversionFactor, LongBinaryOperator factorApplicationStrategy) {}
 
-    static long getConversionFactor(final int index) {
-        final int conversionFactorLookupIndex = Math.abs(index - Integer.signum(index));
+    private static final int MAX_LONG_EXPONENT = 18;
+    private static final int CONVERSION_DATA_LOOKUP_TABLE_SIZE = 2 * (SiPrefix.values()[SiPrefix.values().length - 1].exponent() - SiPrefix.values()[0].exponent()) + 1;
+    private static final int CONVERSION_DATA_LOOKUP_INDEX_OFFSET = CONVERSION_DATA_LOOKUP_TABLE_SIZE / 2;
 
-        if (conversionFactorLookupIndex >= CONVERSION_FACTOR_LOOKUP_TABLE.length) {
-            throw new ArithmeticException("Required conversion factor exceeds supported range for long (max 10^18). Index was " + index);
+    private static final ConversionData[] CONVERSION_DATA_LOOKUP_TABLE = new ConversionData[CONVERSION_DATA_LOOKUP_TABLE_SIZE];
+
+    private static final ConversionData CONVERSION_DATA_ZERO = new ConversionData(0L, (a, b) -> 0L);
+    private static final ConversionData CONVERSION_DATA_IDENTITY = new ConversionData(0L, (a, b) -> a);
+    private static final ConversionData CONVERSION_DATA_OVERFLOW = new ConversionData(0L,
+            (a, b) -> { throw new ArithmeticException("Required conversion factor exceeds supported range for long (max 10^18)"); });
+
+    static {
+        for (int exponent = -CONVERSION_DATA_LOOKUP_INDEX_OFFSET; exponent < -MAX_LONG_EXPONENT; ++exponent) {
+            CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(exponent)] = CONVERSION_DATA_ZERO;
         }
-
-        return CONVERSION_FACTOR_LOOKUP_TABLE[conversionFactorLookupIndex];
+        long conversionFactor = 1_000_000_000_000_000_000L;
+        for (int exponent = -MAX_LONG_EXPONENT ; exponent < 0; ++exponent) {
+            CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(exponent)] = new ConversionData(conversionFactor, (a, b) -> a / b);
+            conversionFactor /= 10L;
+        }
+        CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(0)] = CONVERSION_DATA_IDENTITY;
+        for (int exponent = 1 ; exponent <= MAX_LONG_EXPONENT; ++exponent) {
+            conversionFactor *= 10L;
+            CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(exponent)] = new ConversionData(conversionFactor, Math::multiplyExact);
+        }
+        for (int exponent = MAX_LONG_EXPONENT + 1; exponent <= CONVERSION_DATA_LOOKUP_INDEX_OFFSET; ++exponent) {
+            CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(exponent)] = CONVERSION_DATA_OVERFLOW;
+        }
     }
 
-    static LongBinaryOperator getFactorApplicationStrategy(final int index) {
-        final int strategyIndex = Integer.signum(index) + 1;
-        return FACTOR_APPLICATION_STRATEGIES[strategyIndex];
+    private static int exponentToIndex(final int exponent) {
+        return exponent + CONVERSION_DATA_LOOKUP_INDEX_OFFSET;
+    }
+
+    static ConversionData getConversionData(final int conversionExponent) {
+        return CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(conversionExponent)];
     }
 }
 
 final class ConversionLookupInt {
-    private static final int[] CONVERSION_FACTOR_LOOKUP_TABLE = {
-            10,
-            100,
-            1_000,
-            10_000,
-            100_000,
-            1_000_000,
-            10_000_000,
-            100_000_000,
-            1_000_000_000
-    };
+    record ConversionData (int conversionFactor, IntBinaryOperator factorApplicationStrategy) {}
 
-    private static final IntBinaryOperator[] FACTOR_APPLICATION_STRATEGIES = {
-            (a, b) -> a / b,
-            (a, b) -> a,
-            Math::multiplyExact
-    };
+    private static final int MAX_INT_EXPONENT = 9;
+    private static final int CONVERSION_DATA_LOOKUP_TABLE_SIZE = 2 * (SiPrefix.values()[SiPrefix.values().length - 1].exponent() - SiPrefix.values()[0].exponent()) + 1;
+    private static final int CONVERSION_DATA_LOOKUP_INDEX_OFFSET = CONVERSION_DATA_LOOKUP_TABLE_SIZE / 2;
 
-    static int getConversionFactor(final int index) {
-        final int conversionFactorLookupIndex = Math.abs(index - Integer.signum(index));
+    private static final ConversionData[] CONVERSION_DATA_LOOKUP_TABLE = new ConversionData[CONVERSION_DATA_LOOKUP_TABLE_SIZE];
 
-        if (conversionFactorLookupIndex >= CONVERSION_FACTOR_LOOKUP_TABLE.length) {
-            throw new ArithmeticException("Required conversion factor exceeds supported range for long (max 10^9). Index was " + index);
+    private static final ConversionData CONVERSION_DATA_ZERO = new ConversionData(0, (a, b) -> 0);
+    private static final ConversionData CONVERSION_DATA_IDENTITY = new ConversionData(0, (a, b) -> a);
+    private static final ConversionData CONVERSION_DATA_OVERFLOW = new ConversionData(0,
+            (a, b) -> { throw new ArithmeticException("Required conversion factor exceeds supported range for int (max 10^9)"); });
+
+    static {
+        for (int i = -CONVERSION_DATA_LOOKUP_INDEX_OFFSET; i < -MAX_INT_EXPONENT; ++i) {
+            CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(i)] = CONVERSION_DATA_ZERO;
         }
-
-        return CONVERSION_FACTOR_LOOKUP_TABLE[conversionFactorLookupIndex];
+        for (int i = -MAX_INT_EXPONENT ; i < 0; ++i) {
+            CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(i)] = new ConversionData(BigInteger.TEN.pow(-i).intValue(), (a, b) -> a / b);
+        }
+        CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(0)] = CONVERSION_DATA_IDENTITY;
+        for (int i = 1 ; i <= MAX_INT_EXPONENT; ++i) {
+            CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(i)] = new ConversionData(BigInteger.TEN.pow(i).intValue(), Math::multiplyExact);
+        }
+        for (int i = MAX_INT_EXPONENT + 1; i <= CONVERSION_DATA_LOOKUP_INDEX_OFFSET; ++i) {
+            CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(i)] = CONVERSION_DATA_OVERFLOW;
+        }
     }
 
-    static IntBinaryOperator getFactorApplicationStrategy(final int index) {
-        final int strategyIndex = Integer.signum(index) + 1;
-        return FACTOR_APPLICATION_STRATEGIES[strategyIndex];
+    private static int exponentToIndex(final int exponent) {
+        return exponent + CONVERSION_DATA_LOOKUP_INDEX_OFFSET;
+    }
+
+    static ConversionData getConversionData(final int conversionExponent) {
+        return CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(conversionExponent)];
     }
 }
 
@@ -500,13 +507,13 @@ final class ConversionLookupBigInteger {
             BigInteger::multiply
     };
 
-    static BigInteger getConversionFactor(final int index) {
-        final int conversionFactorLookupIndex = Math.abs(index - Integer.signum(index));
+    static BigInteger getConversionFactor(final int conversionExponent) {
+        final int conversionFactorLookupIndex = Math.abs(conversionExponent - Integer.signum(conversionExponent));
         return CONVERSION_FACTOR_LOOKUP_TABLE[conversionFactorLookupIndex];
     }
 
-    static BinaryOperator<BigInteger> getFactorApplicationStrategy(final int index) {
-        final int strategyIndex = Integer.signum(index) + 1;
+    static BinaryOperator<BigInteger> getFactorApplicationStrategy(final int conversionExponent) {
+        final int strategyIndex = Integer.signum(conversionExponent) + 1;
         return FACTOR_APPLICATION_STRATEGIES[strategyIndex];
     }
 }

@@ -62,7 +62,7 @@ public enum SiPrefix {
     /** hecto prefix (10<sup>2</sup>) */
     HECTO(2),
 
-    /** kil prefix (10<sup>3</sup>) */
+    /** kilo prefix (10<sup>3</sup>) */
     KILO(3),
 
     /** mega prefix (10<sup>6</sup>) */

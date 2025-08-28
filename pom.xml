@@ -66,6 +66,18 @@
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-core</artifactId>
+            <version>1.37</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+            <version>1.37</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -113,6 +125,21 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>pw.krejci</groupId>
+                <artifactId>jmh-maven-plugin</artifactId>
+                <version>0.2.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>benchmark</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <failOnError>true</failOnError>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

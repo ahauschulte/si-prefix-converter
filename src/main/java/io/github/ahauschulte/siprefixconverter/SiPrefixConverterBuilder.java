@@ -147,14 +147,14 @@ public interface SiPrefixConverterBuilder<S, T, C> {
         /**
          * Converts a {@code long} value when the source prefix is fixed.
          * <p>Integer arithmetic; scaling down truncates towards zero and an {@link ArithmeticException}
-         * is thrown if the conversion factor exceeds 10<sup>18</sup> (for both up and down scaling) or the conversion
+         * is thrown if the conversion factor exceeds 10<sup>18</sup> for up-scaling or the conversion
          * calculation overflows.
          *
          * @param targetSiPrefix the target prefix
          * @param sourceValue    the value to convert
          * @return the converted value (possibly truncated)
          * @throws NullPointerException if {@code targetSiPrefix} is {@code null}
-         * @throws ArithmeticException  if the conversion factor is beyond 10^18 (for both up and down scaling) or
+         * @throws ArithmeticException  if the conversion factor is beyond 10^18 for up-scaling or
          * the conversion calculation overflows
          */
         long convert(SiPrefix targetSiPrefix, long sourceValue);
@@ -169,14 +169,14 @@ public interface SiPrefixConverterBuilder<S, T, C> {
         /**
          * Converts a {@code long} value when the target prefix is fixed.
          * <p>Integer arithmetic; scaling down truncates towards zero and an {@link ArithmeticException}
-         * is thrown if the conversion factor exceeds 10<sup>18</sup> (for both up and down scaling) or the conversion
+         * is thrown if the conversion factor exceeds 10<sup>18</sup> for up-scaling or the conversion
          * calculation overflows.
          *
          * @param sourceSiPrefix the source prefix
          * @param sourceValue    the value to convert
          * @return the converted value (possibly truncated)
          * @throws NullPointerException if {@code sourceSiPrefix} is {@code null}
-         * @throws ArithmeticException  if the conversion factor is beyond 10^18 (for both up and down scaling)
+         * @throws ArithmeticException  if the conversion factor is beyond 10^18 for up-scaling
          * or the conversion calculation overflows
          */
         long convert(SiPrefix sourceSiPrefix, long sourceValue);
@@ -191,12 +191,12 @@ public interface SiPrefixConverterBuilder<S, T, C> {
         /**
          * Converts a {@code long} value when both prefixes are fixed.
          * <p>Integer arithmetic; scaling down truncates towards zero and an {@link ArithmeticException}
-         * is thrown if the conversion factor exceeds 10<sup>18</sup> (for both up and down scaling) or the conversion
+         * is thrown if the conversion factor exceeds 10<sup>18</sup> for up-scaling or the conversion
          * calculation overflows.
          *
          * @param sourceValue the value to convert
          * @return the converted value (possibly truncated)
-         * @throws ArithmeticException if the conversion factor is beyond 10^18 (for both up and down scaling) or
+         * @throws ArithmeticException if the conversion factor is beyond 10^18 for up-scaling or
          * the conversion calculation overflows
          */
         long convert(long sourceValue);
@@ -211,14 +211,14 @@ public interface SiPrefixConverterBuilder<S, T, C> {
         /**
          * Converts an {@code int} value when the source prefix is fixed.
          * <p>Integer arithmetic; scaling down truncates towards zero and an {@link ArithmeticException}
-         * is thrown if the conversion factor exceeds 10<sup>9</sup> (for both up and down scaling) or the conversion
+         * is thrown if the conversion factor exceeds 10<sup>9</sup> for up-scaling or the conversion
          * calculation overflows.
          *
          * @param targetSiPrefix the target prefix
          * @param sourceValue    the value to convert
          * @return the converted value (possibly truncated)
          * @throws NullPointerException if {@code targetSiPrefix} is {@code null}
-         * @throws ArithmeticException  if the conversion factor is beyond 10^9 (for both up and down scaling) or
+         * @throws ArithmeticException  if the conversion factor is beyond 10^9 for up-scaling or
          * the conversion calculation overflows
          */
         int convert(SiPrefix targetSiPrefix, int sourceValue);
@@ -233,14 +233,14 @@ public interface SiPrefixConverterBuilder<S, T, C> {
         /**
          * Converts a {@code int} value when the target prefix is fixed.
          * <p>Integer arithmetic; scaling down truncates towards zero and an {@link ArithmeticException}
-         * is thrown if the conversion factor exceeds 10<sup>9</sup> (for both up and down scaling) or the conversion
+         * is thrown if the conversion factor exceeds 10<sup>9</sup> for up-scaling or the conversion
          * calculation overflows.
          *
          * @param sourceSiPrefix the source prefix
          * @param sourceValue    the value to convert
          * @return the converted value (possibly truncated)
          * @throws NullPointerException if {@code sourceSiPrefix} is {@code null}
-         * @throws ArithmeticException  if the conversion factor is beyond 10^9 (for both up and down scaling)
+         * @throws ArithmeticException  if the conversion factor is beyond 10^9 for up-scaling
          * or the conversion calculation overflows
          */
         int convert(SiPrefix sourceSiPrefix, int sourceValue);
@@ -255,12 +255,12 @@ public interface SiPrefixConverterBuilder<S, T, C> {
         /**
          * Converts a {@code int} value when both prefixes are fixed.
          * <p>Integer arithmetic; scaling down truncates towards zero and an {@link ArithmeticException}
-         * is thrown if the conversion factor exceeds 10<sup>9</sup> (for both up and down scaling) or the conversion
+         * is thrown if the conversion factor exceeds 10<sup>9</sup> for up-scaling or the conversion
          * calculation overflows.
          *
          * @param sourceValue the value to convert
          * @return the converted value (possibly truncated)
-         * @throws ArithmeticException if the conversion factor is beyond 10^9 (for both up and down scaling) or
+         * @throws ArithmeticException if the conversion factor is beyond 10^9 for up-scaling or
          * the conversion calculation overflows
          */
         int convert(int sourceValue);

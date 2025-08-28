@@ -30,9 +30,9 @@
  * <ul>
  *   <li><b>Doubles</b>: supports the full SI range from quecto (10^-30) to quetta (10^30).</li>
  *   <li><b>Longs</b>: uses integer arithmetic; scaling down truncates towards zero; conversion factors &gt; 10^18
- *   (for both up and down scaling) throw {@link java.lang.ArithmeticException ArithmeticException}.</li>
+ *   for up-scaling throw {@link java.lang.ArithmeticException ArithmeticException}.</li>
  *   <li><b>Ints</b>: uses integer arithmetic; scaling down truncates towards zero; conversion factors &gt; 10^9
- *  *   (for both up and down scaling) throw {@link java.lang.ArithmeticException ArithmeticException}.</li>
+ *  *   for up-scaling throw {@link java.lang.ArithmeticException ArithmeticException}.</li>
  *   <li><b>BigInteger</b>: supports the full SI range from quecto (10^-30) to quetta (10^30).</li>
  * </ul>
  */
