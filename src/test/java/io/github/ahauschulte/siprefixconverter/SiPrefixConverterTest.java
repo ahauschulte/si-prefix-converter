@@ -48,7 +48,7 @@ class SiPrefixConverterTest {
     @Test
     void testConversionRangeInt() {
         assertEquals(1_000_000_000, SiPrefixConverter.convert(SiPrefix.TERA, SiPrefix.KILO, 1));
-        assertEquals(0L, SiPrefixConverter.convert(SiPrefix.QUECTO, SiPrefix.QUETTA, 1_000_000_000));
+        assertEquals(0, SiPrefixConverter.convert(SiPrefix.QUECTO, SiPrefix.QUETTA, 1_000_000_000));
 
         assertEquals(0, SiPrefixConverter.convert(SiPrefix.DECI, SiPrefix.DECA, 20));
 

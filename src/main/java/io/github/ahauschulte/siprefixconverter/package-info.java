@@ -19,11 +19,11 @@
  * // Convert 1_000_000 nanoseconds to milliseconds using ints (truncation towards zero)
  * int ms = SiPrefixConverter.convert(SiPrefix.NANO, SiPrefix.MILLI, 1_000_000); // -> 1
  *
- * // Reusable converter: from micro to unit for BigInteger
- * var microToUnit = SiPrefixConverter.builder()
+ * // Reusable converter: from milli to unit for BigInteger
+ * var milliToUnit = SiPrefixConverter.builder()
  *         .forBigInteger()
  *         .fixedConverter(SiPrefix.MILLI, SiPrefix.UNIT);
- * java.math.BigInteger exact = microToUnit.convert(java.math.BigInteger.valueOf(250_000)); // -> 250
+ * java.math.BigInteger exact = milliToUnit.convert(java.math.BigInteger.valueOf(250_000)); // -> 250
  *}
  *
  * <p><b>Behaviour and limits</b>

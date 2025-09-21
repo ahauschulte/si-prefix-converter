@@ -231,7 +231,7 @@ public interface SiPrefixConverterBuilder<S, T, C> {
     interface FixedTargetIntConverter {
 
         /**
-         * Converts a {@code int} value when the target prefix is fixed.
+         * Converts an {@code int} value when the target prefix is fixed.
          * <p>Integer arithmetic; scaling down truncates towards zero and an {@link ArithmeticException}
          * is thrown if the conversion factor exceeds 10<sup>9</sup> for up-scaling or the conversion
          * calculation overflows.
@@ -247,13 +247,13 @@ public interface SiPrefixConverterBuilder<S, T, C> {
     }
 
     /**
-     * A converter for converting {@code ints}s with both source and target SI prefix fixed.
+     * A converter for converting {@code int}s with both source and target SI prefix fixed.
      */
     @FunctionalInterface
     interface FixedIntConverter {
 
         /**
-         * Converts a {@code int} value when both prefixes are fixed.
+         * Converts an {@code int} value when both prefixes are fixed.
          * <p>Integer arithmetic; scaling down truncates towards zero and an {@link ArithmeticException}
          * is thrown if the conversion factor exceeds 10<sup>9</sup> for up-scaling or the conversion
          * calculation overflows.
