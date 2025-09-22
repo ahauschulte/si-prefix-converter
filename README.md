@@ -2,8 +2,10 @@
 
 [![Java CI with Maven](https://github.com/ahauschulte/si-prefix-converter/actions/workflows/maven.yml/badge.svg)](https://github.com/ahauschulte/si-prefix-converter/actions/workflows/maven.yml)
 [![CodeQL](https://github.com/ahauschulte/si-prefix-converter/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/ahauschulte/si-prefix-converter/actions/workflows/github-code-scanning/codeql)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.ahauschulte.siprefixconverter/si-prefix-converter.svg)](https://central.sonatype.com/artifact/io.github.ahauschulte.siprefixconverter/si-prefix-converter)
+[![javadoc](https://javadoc.io/badge2/io.github.ahauschulte.siprefixconverter/si-prefix-converter/javadoc.svg)](https://javadoc.io/doc/io.github.ahauschulte.siprefixconverter/si-prefix-converter)
 
-## Summary
+## Overview
 
 Concise utilities for converting numeric values between [SI prefixes](https://en.wikipedia.org/wiki/Metric_prefix) in
 Java.
@@ -42,43 +44,55 @@ rescale existing numbers and value a minimal footprint; both approaches can comf
   [Error Prone](https://github.com/google/error-prone) configured).
 - Clear failure modes: integer conversions throw on excessive factors or overflow during conversion.
 
-## Dependencies
+## Requirements & Dependencies
 
-This library is designed to be completely self-contained with **zero mandatory runtime dependencies**.  
+This library requires:
+
+- **Java 21+** (Maven compiler `release` set to 21).
+- Build tool: Maven 3.9+.
+
+It is designed to be completely self-contained with **zero mandatory runtime dependencies**.  
 To improve API clarity and developer experience, it makes use of [JSpecify](https://jspecify.dev/) annotations
 to declare nullness contracts. The JSpecify dependency is declared as *optional* and is not required at runtime.
 Consumers may include it in their own build if they want to take advantage of nullness information in IDEs
 or static analysis tools, but the core functionality of the library does not depend on it.
 
-## Requirements
+## Getting Started
 
-- **Java 21+** (Maven compiler `release` set to 21).
-- Build tool: Maven 3.9+.
+### Installation
 
-## Installation
+This library requires **Java 21** and has **no mandatory runtime dependencies**. Use the version indicated by the badge
+at the top of this page.
 
-This project uses Maven coordinates from the POM:
+#### Maven
 
 ```xml
-
 <dependency>
     <groupId>io.github.ahauschulte.siprefixconverter</groupId>
     <artifactId>si-prefix-converter</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version><!-- use the latest release version --></version>
 </dependency>
 ```
 
-> The artifact is currently a snapshot. If you wish to depend on it immediately, build and install it locally:
+#### Gradle (Kotlin DSL)
 
-```bash
-mvn install
+```kotlin
+dependencies {
+    implementation("io.github.ahauschulte.siprefixconverter:si-prefix-converter:<latest-version>")
+}
 ```
 
-Then add the dependency to your project as shown above.
+#### Gradle (Groovy DSL)
 
-## Quick Start
+```groovy
+dependencies {
+    implementation 'io.github.ahauschulte.siprefixconverter:si-prefix-converter:<latest-version>'
+}
+```
 
-### One‑Shot Conversions
+### Quick Start
+
+#### One‑Shot Conversions
 
 ```java
 import java.math.BigInteger;
@@ -99,7 +113,7 @@ int nanosInt = SiPrefixConverter.convert(SiPrefix.MILLI, SiPrefix.NANO, 1);    /
 BigInteger seconds = SiPrefixConverter.convert(SiPrefix.MICRO, SiPrefix.UNIT, BigInteger.valueOf(250_000)); // 250
 ```
 
-### Reusable Converters via Builders
+#### Reusable Converters via Builders
 
 ```java
 import io.github.ahauschulte.siprefixconverter.SiPrefix;
@@ -113,18 +127,18 @@ var fromKilo = SiPrefixConverter.builder()
 double meters = fromKilo.convert(SiPrefix.UNIT, 2.5); // 2500.0
         
 // Fix the target prefix for longs (? → milli)
-var toMilli = SiPrefixConverter.builder()
+var toMilliLong = SiPrefixConverter.builder()
         .forLong()
         .fixedTargetPrefixConverter(SiPrefix.MILLI);
 
-long millimetersLong = toMilli.convert(SiPrefix.UNIT, 1234L); // 1_234_000L
+long millimetersLong = toMilliLong.convert(SiPrefix.UNIT, 1234L); // 1_234_000L
 
 // Fix the target prefix for ints (? → milli)
-var toMilli = SiPrefixConverter.builder()
+var toMilliInt = SiPrefixConverter.builder()
         .forInt()
         .fixedTargetPrefixConverter(SiPrefix.MILLI);
 
-int millimetersInt = toMilli.convert(SiPrefix.UNIT, 1234); // 1_234_000
+int millimetersInt = toMilliInt.convert(SiPrefix.UNIT, 1234); // 1_234_000
 
 // Fix both for BigInteger (micro → unit)
 var microToUnit = SiPrefixConverter.builder()
@@ -136,7 +150,7 @@ BigInteger units = microToUnit.convert(java.math.BigInteger.valueOf(250_000)); /
 
 ## API Overview
 
-- **`SiPrefix`** — enum constants representing SI prefixed (e.g. `KILO`, `MILLI`).  
+- **`SiPrefix`** — enum constants representing SI prefixes (e.g. `KILO`, `MILLI`).  
   The enum covers *quecto* to *quetta*. `UNIT` indicates "no prefix".
 - **`SiPrefixConverter`**
     - `convert(SiPrefix source, SiPrefix target, double value): double`
@@ -145,23 +159,37 @@ BigInteger units = microToUnit.convert(java.math.BigInteger.valueOf(250_000)); /
     - `convert(SiPrefix source, SiPrefix target, BigInteger value): BigInteger`
     - `builder(): SiPrefixConverterBuilder.BuilderChoice`
 - **`SiPrefixConverterBuilder`**
-    - `forDouble() / forLong() / forInt() /forBigInteger()` → type‑specialised builders
+    - `forDouble() / forLong() / forInt() / forBigInteger()` → type‑specialised builders
     - `fixedSourcePrefixConverter(SiPrefix source)`
     - `fixedTargetPrefixConverter(SiPrefix target)`
     - `fixedConverter(SiPrefix source, SiPrefix target)`
 
 All methods are **thread‑safe** and expect **non‑null** arguments (package‑level `@NullMarked`).
 
-## Rounding Semantics (long, int, and BigInteger Conversions)
+## Semantics
+
+### Rounding (long, int, and BigInteger Conversions)
 
 - When *downscaling* (÷ 10ᵏ), the result is **truncated towards zero** (no rounding).
 
-## Overflow Semantics (long and int Conversions)
+### Overflow (long and int Conversions)
 
 - When *upscaling* (× 10ᵏ), the value must not overflow `long` or `int`. If the factor exceeds **10¹⁸** for a long
   conversion, **10⁹** for an int conversion or the conversion calculation overflows, an `ArithmeticException` is thrown.
 
-## Performance Notes
+### Double Conversions
+
+Conversions on `double` values follow standard IEEE-754 semantics:
+
+- Overflow results in `Infinity` (positive or negative depending on the sign).
+- Underflow may round to `0.0` when the magnitude is too small to represent.
+- `NaN` inputs propagate unchanged.
+- Rounding is inherent to binary floating-point; very large scaling factors can lose precision, but no exceptions are
+  thrown.
+
+## Performance
+
+### Notes
 
 This library
 
@@ -176,8 +204,8 @@ All conversions run in the **nanosecond range**. For primitive types, performanc
 
 | Type           | Typical conversion (ns/op) |
 |----------------|----------------------------|
-| **int**        | 1.0-1.8                    |
-| **long**       | 1.0-1.8                    |
+| **int**        | 1.0–1.8                    |
+| **long**       | 1.0–1.8                    |
 | **double**     | 0.8–1.3                    |
 | **BigInteger** | 7.1–17.5                   |
 
@@ -220,27 +248,29 @@ All conversions run in the nanosecond range, with predictable differences across
       conversions show almost identical performance.
     - For BigInteger, down-scaling takes roughly twice as long as up-scaling.
 
-## Build, Test, Docs, Benchmark
+### Build from Source
 
-```bash
-# Build
-mvn package
+Building from source is useful if you want to try the latest unreleased changes, work with snapshot versions, or
+contribute to the project.
 
-# Run tests (JUnit 5)
-mvn test
+Clone the repository and run:
 
-# Generate Javadoc (also attaches javadoc JAR via plugin)
-mvn javadoc:jar
-
-# Benchmark
-mvn jmh:benchmark
+```shell
+git clone https://github.com/ahauschulte/si-prefix-converter.git
+cd si-prefix-converter
+mvn clean install
 ```
+
+This installs the library to your local Maven repository so it can be referenced with the same coordinates shown above.
 
 The project is configured with **Error Prone** and **NullAway** to facilitate null‑safety at compile time.
 
-## Versioning & Compatibility
+### Run Benchmark
 
-- The current POM targets **Java 21** (`<maven.compiler.release>21</maven.compiler.release>`).
+```shell
+# Build
+mvn jmh:benchmark
+```
 
 ## Contributing
 
