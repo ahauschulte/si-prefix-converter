@@ -6,7 +6,7 @@
 
     <groupId>io.github.ahauschulte.siprefixconverter</groupId>
     <artifactId>si-prefix-converter</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
 
     <name>SI Prefix Converter</name>
     <description>A library for convenient SI prefix conversion</description>
