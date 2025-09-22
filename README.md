@@ -7,8 +7,7 @@
 
 ## Overview
 
-Concise utilities for converting numeric values between [SI prefixes](https://en.wikipedia.org/wiki/Metric_prefix) in
-Java.
+Concise utilities for converting numeric values between [SI prefixes](https://en.wikipedia.org/wiki/Metric_prefix) in Java.
 
 The public API focuses on three types:
 
@@ -51,11 +50,11 @@ This library requires:
 - **Java 21+** (Maven compiler `release` set to 21).
 - Build tool: Maven 3.9+.
 
-It is designed to be completely self-contained with **zero mandatory runtime dependencies**.  
-To improve API clarity and developer experience, it makes use of [JSpecify](https://jspecify.dev/) annotations
-to declare nullness contracts. The JSpecify dependency is declared as *optional* and is not required at runtime.
-Consumers may include it in their own build if they want to take advantage of nullness information in IDEs
-or static analysis tools, but the core functionality of the library does not depend on it.
+It is designed to be completely self-contained with **zero mandatory runtime dependencies**. To improve API clarity and
+developer experience, it makes use of [JSpecify](https://jspecify.dev/) annotations to declare nullness contracts. The JSpecify dependency
+is declared as *optional* and is not required at runtime. Consumers may include it in their own build if they want to
+take advantage of nullness information in IDEs or static analysis tools, but the core functionality of the library does
+not depend on it.
 
 ## Getting Started
 
@@ -211,8 +210,8 @@ All conversions run in the **nanosecond range**. For primitive types, performanc
 
 ### Detailed Benchmarking Results
 
-Benchmarks were conducted using [JMH](https://openjdk.org/projects/code-tools/jmh/) (JDK 21.0.4, OpenJDK 64-Bit Server
-VM, 21.0.4+7-LTS, JMH 1.37, 2 warmup iterations, 4 measurement iterations, 1 fork.)
+Benchmarks were conducted using [JMH](https://openjdk.org/projects/code-tools/jmh/) (JDK 21.0.4, OpenJDK 64-Bit Server VM, 21.0.4+7-LTS, JMH 1.37,
+2 warmup iterations, 4 measurement iterations, 1 fork.)
 
 All conversions run in the nanosecond range, with predictable differences across API styles and data types.
 
