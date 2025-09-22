@@ -109,7 +109,7 @@ long nanosLong = SiPrefixConverter.convert(SiPrefix.MILLI, SiPrefix.NANO, 1L);  
 int nanosInt = SiPrefixConverter.convert(SiPrefix.MILLI, SiPrefix.NANO, 1);    // 1_000_000
 
 // BigInteger — arbitrary precision
-BigInteger seconds = SiPrefixConverter.convert(SiPrefix.MICRO, SiPrefix.UNIT, BigInteger.valueOf(250_000)); // 250
+BigInteger seconds = SiPrefixConverter.convert(SiPrefix.MICRO, SiPrefix.MILLI, BigInteger.valueOf(250_000)); // 250
 ```
 
 #### Reusable Converters via Builders
@@ -139,12 +139,12 @@ var toMilliInt = SiPrefixConverter.builder()
 
 int millimetersInt = toMilliInt.convert(SiPrefix.UNIT, 1234); // 1_234_000
 
-// Fix both for BigInteger (micro → unit)
-var microToUnit = SiPrefixConverter.builder()
+// Fix both for BigInteger (micro → milli)
+var microToMilli = SiPrefixConverter.builder()
         .forBigInteger()
-        .fixedConverter(SiPrefix.MICRO, SiPrefix.UNIT);
+        .fixedConverter(SiPrefix.MICRO, SiPrefix.MILLI);
 
-BigInteger units = microToUnit.convert(java.math.BigInteger.valueOf(250_000)); // 250
+BigInteger millis = microToMilli.convert(java.math.BigInteger.valueOf(250_000)); // 250
 ```
 
 ## API Overview
