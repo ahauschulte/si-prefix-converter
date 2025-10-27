@@ -1,15 +1,22 @@
-# SI Prefix Converter
+# SI Prefix Converter — Simple and Lightweight SI Prefix Scaling for Java
+
+Convert values between metric prefixes (nano, micro, kilo, mega, etc.) in a single call — fast and predictable.
+
+---
 
 [![Java CI with Maven](https://github.com/ahauschulte/si-prefix-converter/actions/workflows/maven.yml/badge.svg)](https://github.com/ahauschulte/si-prefix-converter/actions/workflows/maven.yml)
 [![CodeQL](https://github.com/ahauschulte/si-prefix-converter/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/ahauschulte/si-prefix-converter/actions/workflows/github-code-scanning/codeql)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.ahauschulte.siprefixconverter/si-prefix-converter.svg)](https://central.sonatype.com/artifact/io.github.ahauschulte.siprefixconverter/si-prefix-converter)
 [![javadoc](https://javadoc.io/badge2/io.github.ahauschulte.siprefixconverter/si-prefix-converter/javadoc.svg)](https://javadoc.io/doc/io.github.ahauschulte.siprefixconverter/si-prefix-converter)
 
+---
+
 ## Overview
 
-Concise utilities for converting numeric values between [SI prefixes](https://en.wikipedia.org/wiki/Metric_prefix) in Java.
+SI Prefix Converter provides a simple API for converting numeric values between
+[SI prefixes](https://en.wikipedia.org/wiki/Metric_prefix) in Java.
 
-The public API focuses on three types:
+The public API focuses on three types in the package `io.github.ahauschulte.siprefixconverter`:
 
 - `SiPrefix` — an enum of SI prefixes from **quecto** (10⁻³⁰) to **quetta** (10³⁰); `UNIT` represents 10⁰.
 - `SiPrefixConverter` — static, thread‑safe conversion methods for `double`, `long`, `int`, and `BigInteger`, plus a
@@ -17,16 +24,28 @@ The public API focuses on three types:
 - `SiPrefixConverterBuilder` — a small, type‑safe builder that produces reusable converters (fix source/target prefixes,
   or both).
 
-This package is annotated with **`@NullMarked`** (JSpecify), i.e. types are **non‑null by default**. Passing `null` to
+The package is annotated with **`@NullMarked`** (JSpecify), i.e. types are **non‑null by default**. Passing `null` to
 API methods is a programming error and results in `NullPointerException`.
+
+## Showcase
+
+```java
+double meters = SiPrefixConverter.convert(SiPrefix.KILO, SiPrefix.UNIT, 3.2); // 3200.0
+
+var microToMilli = SiPrefixConverter.builder()
+        .forDouble()
+        .fixedConverter(SiPrefix.MICRO, SiPrefix.MILLI);
+
+double millis = microToMilli.convert(250.); // 0.25
+```
 
 ## Motivation
 
 If you only need to scale numbers by decimal SI prefixes, a full measurement framework—such as javax.measure (JSR-385)
 and [Indriya](https://unitsofmeasurement.github.io/indriya/)—may be more than you need. This library provides a small
 API for predictable SI prefix conversion across the full range from quecto to quetta, designed for clarity and steady
-performance. For primitives, it avoids allocations, and its behaviour is explicit: overflow-checked; integer downscaling
-truncates towards zero.
+performance. For primitives, it avoids allocations, and its behaviour is explicit: overflow-checked and integer
+downscaling truncates towards zero.
 
 By contrast, javax.measure/Indriya are comprehensive unit-and-quantity frameworks with dimensional analysis, unit
 algebra, formatting, and localisation. Prefer them when you need those capabilities. Choose this library when you simply
@@ -50,11 +69,11 @@ This library requires:
 - **Java 21+** (Maven compiler `release` set to 21).
 - Build tool: Maven 3.9+.
 
-It is designed to be completely self-contained with **zero mandatory runtime dependencies**. To improve API clarity and
-developer experience, it makes use of [JSpecify](https://jspecify.dev/) annotations to declare nullness contracts. The JSpecify dependency
-is declared as *optional* and is not required at runtime. Consumers may include it in their own build if they want to
-take advantage of nullness information in IDEs or static analysis tools, but the core functionality of the library does
-not depend on it.
+It is designed to be completely self-contained with no additional mandatory runtime dependencies. To improve API clarity
+and developer experience, it makes use of [JSpecify](https://jspecify.dev/) annotations to declare nullness contracts. The JSpecify
+dependency is declared as *optional* and is not required at runtime. Consumers may include it in their own build if they
+want to take advantage of nullness information in IDEs or static analysis tools, but the core functionality of the
+library does not depend on it.
 
 ## Getting Started
 
