@@ -2,7 +2,9 @@ package io.github.ahauschulte.siprefixconverter;
 
 import java.math.BigInteger;
 import java.util.Objects;
-import java.util.function.*;
+import java.util.function.BinaryOperator;
+import java.util.function.IntBinaryOperator;
+import java.util.function.LongBinaryOperator;
 
 /**
  * Utility for converting numeric values between different SI prefixes.
@@ -305,22 +307,30 @@ public final class SiPrefixConverter {
         INSTANCE;
 
         @Override
-        public SiPrefixConverterBuilder<SiPrefixConverterBuilder.FixedSourceDoubleConverter, SiPrefixConverterBuilder.FixedTargetDoubleConverter, SiPrefixConverterBuilder.FixedDoubleConverter> forDouble() {
+        public SiPrefixConverterBuilder<SiPrefixConverterBuilder.FixedSourceDoubleConverter,
+                SiPrefixConverterBuilder.FixedTargetDoubleConverter,
+                SiPrefixConverterBuilder.FixedDoubleConverter> forDouble() {
             return SiPrefixDoubleConverterBuilder.INSTANCE;
         }
 
         @Override
-        public SiPrefixConverterBuilder<SiPrefixConverterBuilder.FixedSourceLongConverter, SiPrefixConverterBuilder.FixedTargetLongConverter, SiPrefixConverterBuilder.FixedLongConverter> forLong() {
+        public SiPrefixConverterBuilder<SiPrefixConverterBuilder.FixedSourceLongConverter,
+                SiPrefixConverterBuilder.FixedTargetLongConverter,
+                SiPrefixConverterBuilder.FixedLongConverter> forLong() {
             return SiPrefixLongConverterBuilder.INSTANCE;
         }
 
         @Override
-        public SiPrefixConverterBuilder<SiPrefixConverterBuilder.FixedSourceIntConverter, SiPrefixConverterBuilder.FixedTargetIntConverter, SiPrefixConverterBuilder.FixedIntConverter> forInt() {
+        public SiPrefixConverterBuilder<SiPrefixConverterBuilder.FixedSourceIntConverter,
+                SiPrefixConverterBuilder.FixedTargetIntConverter,
+                SiPrefixConverterBuilder.FixedIntConverter> forInt() {
             return SiPrefixIntConverterBuilder.INSTANCE;
         }
 
         @Override
-        public SiPrefixConverterBuilder<SiPrefixConverterBuilder.FixedSourceBigIntegerConverter, SiPrefixConverterBuilder.FixedTargetBigIntegerConverter, SiPrefixConverterBuilder.FixedBigIntegerConverter> forBigInteger() {
+        public SiPrefixConverterBuilder<SiPrefixConverterBuilder.FixedSourceBigIntegerConverter,
+                SiPrefixConverterBuilder.FixedTargetBigIntegerConverter,
+                SiPrefixConverterBuilder.FixedBigIntegerConverter> forBigInteger() {
             return SiPrefixBigIntegerConverterBuilder.INSTANCE;
         }
     }
@@ -353,10 +363,12 @@ public final class SiPrefixConverter {
 
     private static final class ConversionLookupLong {
 
-        record ConversionData (long conversionFactor, LongBinaryOperator factorApplicationStrategy) {}
+        record ConversionData(long conversionFactor, LongBinaryOperator factorApplicationStrategy) {
+        }
 
         private static final int MAX_LONG_EXPONENT = 18;
-        private static final int CONVERSION_DATA_LOOKUP_TABLE_SIZE = 2 * (SiPrefix.values()[SiPrefix.values().length - 1].exponent() - SiPrefix.values()[0].exponent()) + 1;
+        private static final int CONVERSION_DATA_LOOKUP_TABLE_SIZE = 2 * (SiPrefix.values()[SiPrefix.values().length - 1].exponent()
+                - SiPrefix.values()[0].exponent()) + 1;
         private static final int CONVERSION_DATA_LOOKUP_INDEX_OFFSET = CONVERSION_DATA_LOOKUP_TABLE_SIZE / 2;
 
         private static final ConversionData[] CONVERSION_DATA_LOOKUP_TABLE = new ConversionData[CONVERSION_DATA_LOOKUP_TABLE_SIZE];
@@ -364,19 +376,21 @@ public final class SiPrefixConverter {
         private static final ConversionData CONVERSION_DATA_ZERO = new ConversionData(0L, (a, b) -> 0L);
         private static final ConversionData CONVERSION_DATA_IDENTITY = new ConversionData(0L, (a, b) -> a);
         private static final ConversionData CONVERSION_DATA_OVERFLOW = new ConversionData(0L,
-                (a, b) -> { throw new ArithmeticException("Required conversion factor exceeds supported range for long (max 10^18)"); });
+                (a, b) -> {
+                    throw new ArithmeticException("Required conversion factor exceeds supported range for long (max 10^18)");
+                });
 
         static {
             for (int exponent = -CONVERSION_DATA_LOOKUP_INDEX_OFFSET; exponent < -MAX_LONG_EXPONENT; ++exponent) {
                 CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(exponent)] = CONVERSION_DATA_ZERO;
             }
             long conversionFactor = 1_000_000_000_000_000_000L;
-            for (int exponent = -MAX_LONG_EXPONENT ; exponent < 0; ++exponent) {
+            for (int exponent = -MAX_LONG_EXPONENT; exponent < 0; ++exponent) {
                 CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(exponent)] = new ConversionData(conversionFactor, (a, b) -> a / b);
                 conversionFactor /= 10L;
             }
             CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(0)] = CONVERSION_DATA_IDENTITY;
-            for (int exponent = 1 ; exponent <= MAX_LONG_EXPONENT; ++exponent) {
+            for (int exponent = 1; exponent <= MAX_LONG_EXPONENT; ++exponent) {
                 conversionFactor *= 10L;
                 CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(exponent)] = new ConversionData(conversionFactor, Math::multiplyExact);
             }
@@ -395,10 +409,12 @@ public final class SiPrefixConverter {
     }
 
     private static final class ConversionLookupInt {
-        record ConversionData (int conversionFactor, IntBinaryOperator factorApplicationStrategy) {}
+        record ConversionData(int conversionFactor, IntBinaryOperator factorApplicationStrategy) {
+        }
 
         private static final int MAX_INT_EXPONENT = 9;
-        private static final int CONVERSION_DATA_LOOKUP_TABLE_SIZE = 2 * (SiPrefix.values()[SiPrefix.values().length - 1].exponent() - SiPrefix.values()[0].exponent()) + 1;
+        private static final int CONVERSION_DATA_LOOKUP_TABLE_SIZE = 2 * (SiPrefix.values()[SiPrefix.values().length - 1].exponent()
+                - SiPrefix.values()[0].exponent()) + 1;
         private static final int CONVERSION_DATA_LOOKUP_INDEX_OFFSET = CONVERSION_DATA_LOOKUP_TABLE_SIZE / 2;
 
         private static final ConversionData[] CONVERSION_DATA_LOOKUP_TABLE = new ConversionData[CONVERSION_DATA_LOOKUP_TABLE_SIZE];
@@ -406,17 +422,19 @@ public final class SiPrefixConverter {
         private static final ConversionData CONVERSION_DATA_ZERO = new ConversionData(0, (a, b) -> 0);
         private static final ConversionData CONVERSION_DATA_IDENTITY = new ConversionData(0, (a, b) -> a);
         private static final ConversionData CONVERSION_DATA_OVERFLOW = new ConversionData(0,
-                (a, b) -> { throw new ArithmeticException("Required conversion factor exceeds supported range for int (max 10^9)"); });
+                (a, b) -> {
+                    throw new ArithmeticException("Required conversion factor exceeds supported range for int (max 10^9)");
+                });
 
         static {
             for (int i = -CONVERSION_DATA_LOOKUP_INDEX_OFFSET; i < -MAX_INT_EXPONENT; ++i) {
                 CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(i)] = CONVERSION_DATA_ZERO;
             }
-            for (int i = -MAX_INT_EXPONENT ; i < 0; ++i) {
+            for (int i = -MAX_INT_EXPONENT; i < 0; ++i) {
                 CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(i)] = new ConversionData(BigInteger.TEN.pow(-i).intValue(), (a, b) -> a / b);
             }
             CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(0)] = CONVERSION_DATA_IDENTITY;
-            for (int i = 1 ; i <= MAX_INT_EXPONENT; ++i) {
+            for (int i = 1; i <= MAX_INT_EXPONENT; ++i) {
                 CONVERSION_DATA_LOOKUP_TABLE[exponentToIndex(i)] = new ConversionData(BigInteger.TEN.pow(i).intValue(), Math::multiplyExact);
             }
             for (int i = MAX_INT_EXPONENT + 1; i <= CONVERSION_DATA_LOOKUP_INDEX_OFFSET; ++i) {
